@@ -1,3 +1,3 @@
 def greet():
     print('Fixed bug in feature')
-greet()
+greet()This change is stashed
