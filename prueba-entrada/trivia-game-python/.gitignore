@@ -25,6 +25,8 @@ venv/
 env/
 ENV/
 .env
+.env.*
+!.env.example
 .venv
 env.bak/
 venv.bak/
@@ -40,6 +42,9 @@ venv.bak/
 logs/
 log/
 
+# Database
+*.sqlite3
+*.db
 
 # Docker
 .docker/
