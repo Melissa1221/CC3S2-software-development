@@ -6,7 +6,7 @@
       "options": ["Madrid", "Londres", "París", "Berlín"],
       "correct_answer": "París",
       "category": "geografía",
-      "difficulty": "fácil"
+      "difficulty": "easy"
     },
     {
       "id": 2,
@@ -14,7 +14,7 @@
       "options": ["Venus", "Marte", "Júpiter", "Saturno"],
       "correct_answer": "Marte",
       "category": "ciencia",
-      "difficulty": "fácil"
+      "difficulty": "easy"
     },
     {
       "id": 3,
@@ -22,7 +22,7 @@
       "options": ["1", "2", "3", "4"],
       "correct_answer": "4",
       "category": "matemáticas",
-      "difficulty": "fácil"
+      "difficulty": "easy"
     },
     {
       "id": 4,
@@ -30,7 +30,7 @@
       "options": ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
       "correct_answer": "William Shakespeare",
       "category": "literatura",
-      "difficulty": "fácil"
+      "difficulty": "medium"
     },
     {
       "id": 5,
@@ -38,7 +38,7 @@
       "options": ["Océano Atlántico", "Océano Índico", "Océano Ártico", "Océano Pacífico"],
       "correct_answer": "Océano Pacífico",
       "category": "geografía",
-      "difficulty": "fácil"
+      "difficulty": "medium"
     },
     {
       "id": 6,
@@ -46,7 +46,7 @@
       "options": ["Go", "Gd", "Au", "Ag"],
       "correct_answer": "Au",
       "category": "ciencia",
-      "difficulty": "medio"
+      "difficulty": "medium"
     },
     {
       "id": 7,
@@ -54,7 +54,7 @@
       "options": ["Nueva Zelanda", "Sudáfrica", "Australia", "Brasil"],
       "correct_answer": "Australia",
       "category": "geografía",
-      "difficulty": "fácil"
+      "difficulty": "easy"
     },
     {
       "id": 8,
@@ -62,7 +62,7 @@
       "options": ["K2", "Monte Everest", "Kilimanjaro", "Denali"],
       "correct_answer": "Monte Everest",
       "category": "geografía",
-      "difficulty": "fácil"
+      "difficulty": "medium"
     },
     {
       "id": 9,
@@ -70,7 +70,7 @@
       "options": ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Miguel Ángel"],
       "correct_answer": "Leonardo da Vinci",
       "category": "arte",
-      "difficulty": "fácil"
+      "difficulty": "easy"
     },
     {
       "id": 10,
@@ -78,7 +78,7 @@
       "options": ["0", "1", "2", "3"],
       "correct_answer": "2",
       "category": "matemáticas",
-      "difficulty": "fácil"
+      "difficulty": "hard"
     },
     {
       "id": 11,
