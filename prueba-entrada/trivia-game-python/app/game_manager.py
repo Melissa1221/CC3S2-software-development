@@ -4,10 +4,8 @@ from app.models.question import Question
 class GameManager:
     def __init__(self):
         self.quiz = Quiz()
-        self.score = 0
-        self.total_questions = 0
-        self.correct_answers = 0
-        self.incorrect_answers = 0
+        self.total_rounds = 10
+        self.current_round = 0
 
     def load_questions(self):
         questions = [
@@ -25,19 +23,25 @@ class GameManager:
         
         for question in questions:
             self.quiz.add_question(question)
-            
-        self.total_questions = len(questions)
+
+    def run_game(self):
+        self.load_questions()
+        while self.current_round < self.total_rounds:
+            question = self.quiz.get_next_question()
+            if not question:
+                break
+            self.play_round(question)
+            self.current_round += 1
+        self.show_final_score()
+
+    def play_round(self, question):
+        pass
 
     def answer_question(self, question, answer):
         option_index = int(answer) - 1
         if 0 <= option_index < len(question.options):
             selected_option = question.options[option_index]
-            if question.is_correct(selected_option):
-                self.correct_answers += 1
-                return True
-            else:
-                self.incorrect_answers += 1
-                return False
+            return self.quiz.answer_question(question, selected_option)
         else:
             print("Opción inválida seleccionada.")
             return False
@@ -46,8 +50,7 @@ class GameManager:
         return self.quiz.get_next_question()
         
     def get_game_summary(self):
-        return {
-            "total_questions": self.total_questions,
-            "correct_answers": self.correct_answers,
-            "incorrect_answers": self.incorrect_answers
-        } 
+        return self.quiz.get_score()
+        
+    def show_final_score(self):
+        pass 
