@@ -5,8 +5,10 @@ Un juego de trivia en consola desarrollado en Python con soporte para base de da
 ## Características
 
 - 30 preguntas de trivia en múltiples categorías
+- Niveles de dificultad (fácil, medio, difícil) con sistema de puntuación variable
 - Sistema de puntuación y seguimiento de rondas
-- Interfaz de consola interactiva
+- Interfaz de consola interactiva mejorada
+- Estadísticas detalladas por nivel de dificultad
 - Integración con PostgreSQL para almacenar preguntas
 - API REST con FastAPI para acceso web
 - Soporte para modo offline (fallback local)
@@ -21,7 +23,6 @@ Un juego de trivia en consola desarrollado en Python con soporte para base de da
 
 1. Clonar el repositorio:
    ```bash
-   git clone <repositorio>
    cd trivia-game-python
    ```
 
@@ -85,15 +86,17 @@ La API proporciona acceso a todas las funcionalidades del juego y permite crear 
 
 - **GET /** - Página de bienvenida
 - **GET /questions/random** - Obtiene preguntas aleatorias
-  - Parámetros: count (opcional, default=10)
-  - Ejemplo: `/questions/random?count=5`
+  - Parámetros: 
+    - count (opcional, default=10)
+    - difficulty (opcional, valores: "easy", "medium", "hard")
+  - Ejemplo: `/questions/random?count=5&difficulty=medium`
   
 - **POST /questions/answer** - Verifica si una respuesta es correcta
   - Body: `{ "question_id": 1, "answer": "París" }`
-  - Retorna: `{ "correct": true }`
+  - Retorna: `{ "correct": true, "points_earned": 2 }`
   
-- **GET /quiz/summary** - Obtiene el resumen del quiz
-  - Retorna: `{ "total_questions": 10, "correct_answers": 7, "incorrect_answers": 3, "accuracy": 70.0 }`
+- **GET /quiz/summary** - Obtiene el resumen del quiz con estadísticas detalladas
+  - Retorna: `{ "total_questions": 10, "correct_answers": 7, "incorrect_answers": 3, "total_score": 12, "accuracy": 70.0, "difficulty_stats": {...} }`
   
 - **POST /quiz/reset** - Reinicia las estadísticas
   - Retorna: `{ "message": "Estadísticas del quiz reiniciadas" }`
@@ -101,8 +104,8 @@ La API proporciona acceso a todas las funcionalidades del juego y permite crear 
 ### Uso con curl
 
 ```bash
-# Obtener preguntas aleatorias
-curl -X GET "http://localhost:8000/questions/random?count=3"
+# Obtener preguntas aleatorias de dificultad media
+curl -X GET "http://localhost:8000/questions/random?count=3&difficulty=medium"
 
 # Enviar una respuesta
 curl -X POST "http://localhost:8000/questions/answer" \
@@ -125,38 +128,17 @@ python -m scripts.load_questions --local
 python -m scripts.load_questions
 ```
 
-## Estructura del proyecto
-
-```
-trivia-game-python/
-├── app/                    # Código principal
-│   ├── models/             # Modelos de datos
-│   │   ├── question.py     # Clase Question
-│   │   ├── quiz.py         # Clase Quiz
-│   │   └── db_manager.py   # Gestor de base de datos
-│   ├── main.py             # Punto de entrada (consola)
-│   ├── api.py              # API REST con FastAPI
-│   ├── game_manager.py     # Lógica del juego
-│   └── console_interface.py # Interfaz de consola
-├── data/
-│   └── questions.json      # Banco de preguntas
-├── tests/                  # Pruebas unitarias
-├── scripts/
-│   └── load_questions.py   # Script para cargar preguntas
-├── docs/                   # Documentación
-├── .env.example            # Plantilla de variables de entorno
-├── requirements.txt        # Dependencias
-├── Dockerfile              # Configuración de Docker
-└── docker-compose.yml      # Configuración de Docker Compose
-```
-
 ## Modo de juego
 
 1. El juego selecciona aleatoriamente 10 preguntas de la base de datos o del archivo local.
-2. En cada ronda se muestra una pregunta con 4 opciones.
+2. En cada ronda se muestra una pregunta con 4 opciones, su nivel de dificultad y los puntos que vale.
 3. El jugador selecciona una respuesta mediante el número correspondiente.
 4. Se muestra inmediatamente si la respuesta es correcta o incorrecta.
-5. Al finalizar todas las rondas, se muestra un resumen con la puntuación.
+5. Las preguntas tienen diferentes valores según su dificultad:
+   - Fácil: 1 punto
+   - Medio: 2 puntos
+   - Difícil: 3 puntos
+6. Al finalizar todas las rondas, se muestra un resumen detallado con la puntuación total y estadísticas por nivel de dificultad.
 
 ## Desarrollo
 
@@ -168,12 +150,12 @@ python -m pytest
 
 # Ejecutar pruebas específicas
 python -m pytest tests/test_quiz.py
-python -m pytest tests/test_scoring.py
+python -m pytest tests/test_difficulty.py
 ```
 
 ### Notas para desarrolladores
 
 - El sistema está diseñado para funcionar tanto con base de datos como en modo local.
 - Si la conexión a la base de datos falla, el sistema utilizará automáticamente las preguntas del archivo JSON local.
-- El archivo `data/questions.json` contiene 30 preguntas predefinidas en español.
+- El archivo `data/questions.json` contiene 30 preguntas predefinidas en español con distintos niveles de dificultad.
 - La documentación interactiva de la API (Swagger UI) facilita las pruebas y el desarrollo.
