@@ -41,9 +41,11 @@ class ConsoleInterface:
     def display_game_summary(self, summary):
         self.display_final_score(summary)
         
-    def run_game(self):
+    async def run_game(self):
         self.display_welcome()
-        self.game_manager.load_questions()
+        
+        await self.game_manager.initialize()
+        await self.game_manager.load_questions()
         
         while True:
             question = self.game_manager.get_next_question()
@@ -64,4 +66,6 @@ class ConsoleInterface:
             if self.game_manager.current_round >= self.game_manager.total_rounds:
                 break
             
-        self.display_final_score(self.game_manager.get_game_summary()) 
+        self.display_final_score(self.game_manager.get_game_summary())
+        
+        await self.game_manager.cleanup() 

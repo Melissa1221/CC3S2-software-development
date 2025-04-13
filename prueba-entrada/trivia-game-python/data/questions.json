@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "description": "¿Cuál es la capital de Francia?",
+      "options": ["Madrid", "Londres", "París", "Berlín"],
+      "correct_answer": "París",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 2,
+      "description": "¿Qué planeta es conocido como el Planeta Rojo?",
+      "options": ["Venus", "Marte", "Júpiter", "Saturno"],
+      "correct_answer": "Marte",
+      "category": "ciencia",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 3,
+      "description": "¿Cuánto es 2 + 2?",
+      "options": ["1", "2", "3", "4"],
+      "correct_answer": "4",
+      "category": "matemáticas",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 4,
+      "description": "¿Quién escribió Romeo y Julieta?",
+      "options": ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+      "correct_answer": "William Shakespeare",
+      "category": "literatura",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 5,
+      "description": "¿Cuál es el océano más grande de la Tierra?",
+      "options": ["Océano Atlántico", "Océano Índico", "Océano Ártico", "Océano Pacífico"],
+      "correct_answer": "Océano Pacífico",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 6,
+      "description": "¿Cuál es el símbolo químico del oro?",
+      "options": ["Go", "Gd", "Au", "Ag"],
+      "correct_answer": "Au",
+      "category": "ciencia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 7,
+      "description": "¿Qué país es hogar del canguro?",
+      "options": ["Nueva Zelanda", "Sudáfrica", "Australia", "Brasil"],
+      "correct_answer": "Australia",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 8,
+      "description": "¿Cuál es la montaña más alta del mundo?",
+      "options": ["K2", "Monte Everest", "Kilimanjaro", "Denali"],
+      "correct_answer": "Monte Everest",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 9,
+      "description": "¿Quién pintó la Mona Lisa?",
+      "options": ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Miguel Ángel"],
+      "correct_answer": "Leonardo da Vinci",
+      "category": "arte",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 10,
+      "description": "¿Cuál es el número primo más pequeño?",
+      "options": ["0", "1", "2", "3"],
+      "correct_answer": "2",
+      "category": "matemáticas",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 11,
+      "description": "¿En qué año llegó Cristóbal Colón a América?",
+      "options": ["1492", "1592", "1392", "1500"],
+      "correct_answer": "1492",
+      "category": "historia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 12,
+      "description": "¿Cuál es el elemento químico más abundante en el universo?",
+      "options": ["Oxígeno", "Hidrógeno", "Carbono", "Helio"],
+      "correct_answer": "Hidrógeno",
+      "category": "ciencia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 13,
+      "description": "¿Quién escribió 'Cien Años de Soledad'?",
+      "options": ["Mario Vargas Llosa", "Jorge Luis Borges", "Gabriel García Márquez", "Julio Cortázar"],
+      "correct_answer": "Gabriel García Márquez",
+      "category": "literatura",
+      "difficulty": "medio"
+    },
+    {
+      "id": 14,
+      "description": "¿Cuál es el hueso más largo del cuerpo humano?",
+      "options": ["Fémur", "Húmero", "Tibia", "Radio"],
+      "correct_answer": "Fémur",
+      "category": "ciencia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 15,
+      "description": "¿Qué famoso físico propuso la teoría de la relatividad?",
+      "options": ["Isaac Newton", "Galileo Galilei", "Albert Einstein", "Stephen Hawking"],
+      "correct_answer": "Albert Einstein",
+      "category": "ciencia",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 16,
+      "description": "¿Cuál es el río más largo del mundo?",
+      "options": ["Nilo", "Amazonas", "Yangtsé", "Misisipi"],
+      "correct_answer": "Amazonas",
+      "category": "geografía",
+      "difficulty": "medio"
+    },
+    {
+      "id": 17,
+      "description": "¿En qué año comenzó la Primera Guerra Mundial?",
+      "options": ["1914", "1916", "1918", "1920"],
+      "correct_answer": "1914",
+      "category": "historia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 18,
+      "description": "¿Cuál es la capital de Japón?",
+      "options": ["Pekín", "Seúl", "Bangkok", "Tokio"],
+      "correct_answer": "Tokio",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 19,
+      "description": "¿Cuál es el resultado de 9 x 9?",
+      "options": ["81", "72", "90", "99"],
+      "correct_answer": "81",
+      "category": "matemáticas",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 20,
+      "description": "¿Cuál es la fórmula química del agua?",
+      "options": ["H2O", "CO2", "O2", "H2O2"],
+      "correct_answer": "H2O",
+      "category": "ciencia",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 21,
+      "description": "¿Quién fue el primer hombre en pisar la Luna?",
+      "options": ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "Alan Shepard"],
+      "correct_answer": "Neil Armstrong",
+      "category": "historia",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 22,
+      "description": "¿Cuál es el planeta más grande del sistema solar?",
+      "options": ["Tierra", "Marte", "Júpiter", "Saturno"],
+      "correct_answer": "Júpiter",
+      "category": "ciencia",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 23,
+      "description": "¿En qué país se encuentra la Torre Eiffel?",
+      "options": ["Italia", "Francia", "España", "Alemania"],
+      "correct_answer": "Francia",
+      "category": "geografía",
+      "difficulty": "fácil"
+    },
+    {
+      "id": 24,
+      "description": "¿Quién pintó 'La Noche Estrellada'?",
+      "options": ["Pablo Picasso", "Salvador Dalí", "Vincent van Gogh", "Claude Monet"],
+      "correct_answer": "Vincent van Gogh",
+      "category": "arte",
+      "difficulty": "medio"
+    },
+    {
+      "id": 25,
+      "description": "¿Qué órgano del cuerpo humano produce la insulina?",
+      "options": ["Hígado", "Riñón", "Páncreas", "Estómago"],
+      "correct_answer": "Páncreas",
+      "category": "ciencia",
+      "difficulty": "difícil"
+    },
+    {
+      "id": 26,
+      "description": "¿Cuál es el valor de Pi (π) aproximado a dos decimales?",
+      "options": ["3.14", "3.41", "3.12", "3.16"],
+      "correct_answer": "3.14",
+      "category": "matemáticas",
+      "difficulty": "medio"
+    },
+    {
+      "id": 27,
+      "description": "¿En qué país nació el fútbol moderno?",
+      "options": ["Brasil", "Argentina", "Italia", "Inglaterra"],
+      "correct_answer": "Inglaterra",
+      "category": "deportes",
+      "difficulty": "medio"
+    },
+    {
+      "id": 28,
+      "description": "¿Cuál es el animal terrestre más rápido del mundo?",
+      "options": ["León", "Guepardo", "Gacela", "Tigre"],
+      "correct_answer": "Guepardo",
+      "category": "ciencia",
+      "difficulty": "medio"
+    },
+    {
+      "id": 29,
+      "description": "¿Cuál es la capital de Australia?",
+      "options": ["Sídney", "Melbourne", "Canberra", "Brisbane"],
+      "correct_answer": "Canberra",
+      "category": "geografía",
+      "difficulty": "difícil"
+    },
+    {
+      "id": 30,
+      "description": "¿Quién escribió 'El Principito'?",
+      "options": ["Julio Verne", "Antoine de Saint-Exupéry", "Hans Christian Andersen", "Oscar Wilde"],
+      "correct_answer": "Antoine de Saint-Exupéry",
+      "category": "literatura",
+      "difficulty": "medio"
+    }
+  ]
+} 
