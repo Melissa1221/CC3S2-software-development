@@ -22,8 +22,6 @@ class Quiz:
         self.correct_answers = 0
         self.incorrect_answers = 0
 
-    # ...
-
     def answer_question(self, question, answer):
         if question.is_correct(answer):
             self.correct_answers += 1
@@ -77,7 +75,6 @@ Se ha actualizado `ConsoleInterface` para mostrar información de rondas y puntu
 
 ```python
 class ConsoleInterface:
-    # ...
     
     def display_round(self, round_number, total_rounds):
         print(f"\nRonda {round_number} de {total_rounds}")
@@ -126,7 +123,6 @@ class DBManager:
         self.connected = False
         
     async def get_random_questions(self, limit=10):
-        # Obtiene preguntas aleatorias de la base de datos
         query = """
             SELECT q.id, q.description, q.options, q.correct_answer, c.name as category, q.difficulty
             FROM questions q
@@ -134,7 +130,7 @@ class DBManager:
             ORDER BY RANDOM()
             LIMIT :limit
         """
-        # ...
+        
 ```
 
 Las principales características implementadas son:
@@ -169,18 +165,12 @@ app = FastAPI(title="Trivia Game API", description="API para el juego de trivia"
 
 @app.get("/questions/random", response_model=List[QuestionResponse])
 async def get_random_questions(count: int = 10):
-    # Obtiene preguntas aleatorias de la base de datos o del JSON local
-    # ...
     
 @app.post("/questions/answer", response_model=AnswerResponse)
 async def check_answer(answer_request: AnswerRequest):
-    # Verifica si la respuesta es correcta
-    # ...
     
 @app.get("/quiz/summary", response_model=QuizSummary)
 async def get_quiz_summary():
-    # Devuelve el resumen del quiz
-    # ...
 ```
 
 La API proporciona los siguientes endpoints:
