@@ -45,6 +45,11 @@ jobs:
           cp .env.example .env
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/trivia_test" >> .env
           pytest tests/integration/
+      
+      - name: Run Security Scan
+        run: |
+          pip install bandit
+          bandit -r app/ -f json -o bandit-results.json
           
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@master
