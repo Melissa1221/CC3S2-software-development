@@ -9,11 +9,15 @@ import json
 from enum import Enum
 import os
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 from app.models.question import Question
 from app.models.db_manager import DBManager
 from app.models.difficulty import DifficultyLevel
 from app.models.game_stats import GameStats
+
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY", "defaultsecretkey")
 
 db_manager = None
 questions_cache = {}
