@@ -77,7 +77,7 @@ def test_game_stats_update_stats():
     assert stats.total_rounds == 4
     assert stats.correct_answers == 3
     assert stats.incorrect_answers == 1
-    assert stats.total_score == 6  # unchanged
+    assert stats.total_score == 6 
     assert stats.difficulty_stats[DifficultyLevel.HARD]['correct'] == 1
     assert stats.difficulty_stats[DifficultyLevel.HARD]['total'] == 2
 

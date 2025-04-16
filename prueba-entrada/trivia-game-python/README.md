@@ -12,6 +12,8 @@ Un juego de trivia en consola desarrollado en Python con soporte para base de da
 - Integración con PostgreSQL para almacenar preguntas
 - API REST con FastAPI para acceso web
 - Soporte para modo offline (fallback local)
+- Pipeline CI/CD con GitHub Actions
+- Análisis de código con SonarCloud
 
 ## Requisitos
 
@@ -151,11 +153,44 @@ python -m pytest
 # Ejecutar pruebas específicas
 python -m pytest tests/test_quiz.py
 python -m pytest tests/test_difficulty.py
+
+# Ejecutar pruebas de integración
+python -m pytest tests/integration/ -v
+
+# Generar informe de cobertura
+python -m pytest --cov=app --cov-report=xml --cov-report=term
 ```
 
-### Notas para desarrolladores
+### CI/CD con GitHub Actions
+
+El proyecto incluye un pipeline CI/CD configurado con GitHub Actions que se ejecuta automáticamente al hacer push a las ramas `develop` y `main`:
+
+1. **Pruebas unitarias**: Verifica el funcionamiento correcto de los componentes individuales
+2. **Pruebas de integración**: Valida la interacción entre componentes, especialmente la API
+3. **Análisis de código**: Utiliza SonarCloud para analizar la calidad del código
+
+Para ver los resultados del CI/CD:
+- Ve a la pestaña "Actions" en el repositorio de GitHub
+- Consulta el dashboard en SonarCloud (requiere configuración)
+
+### Análisis de código con SonarCloud
+
+Para ejecutar el análisis de código localmente antes de subir cambios:
+
+1. Instala SonarScanner
+2. Ejecuta el análisis:
+   ```bash
+   sonar-scanner \
+     -Dsonar.projectKey=trivia-game-python \
+     -Dsonar.sources=app \
+     -Dsonar.python.coverage.reportPaths=coverage.xml
+   ```
+
+### Notas 
 
 - El sistema está diseñado para funcionar tanto con base de datos como en modo local.
 - Si la conexión a la base de datos falla, el sistema utilizará automáticamente las preguntas del archivo JSON local.
 - El archivo `data/questions.json` contiene 30 preguntas predefinidas en español con distintos niveles de dificultad.
 - La documentación interactiva de la API (Swagger UI) facilita las pruebas y el desarrollo.
+- Se ha implementado un sistema de normalización de dificultad que permite manejar valores tanto en español como en inglés.
+- Para solucionar problemas de importación en las pruebas, utiliza `PYTHONPATH=. python -m pytest`.
