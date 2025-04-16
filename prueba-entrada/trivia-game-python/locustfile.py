@@ -1,5 +1,6 @@
 from locust import HttpUser, task, between
 import json
+import secrets
 
 class TriviaApiUser(HttpUser):
     wait_time = between(1, 5)
@@ -26,8 +27,8 @@ class TriviaApiUser(HttpUser):
                 question = questions[0]
                 
                 if question["options"] and len(question["options"]) > 0:
-                    import random
-                    option_index = random.randint(0, len(question["options"]) - 1)
+                    option_count = len(question["options"])
+                    option_index = secrets.randbelow(option_count)
                     selected_option = question["options"][option_index]
                     
                     self.client.post(
