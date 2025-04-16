@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import asyncio
 import random
+import secrets
 import json
 from enum import Enum
 import os
@@ -214,7 +215,12 @@ async def get_random_questions(
                 
                 if len(all_questions) > count:
                     print(f"Seleccionando {count} preguntas aleatorias")
-                    all_questions = random.sample(all_questions, count)
+                    indices = set()
+                    while len(indices) < count:
+                        indices.add(secrets.randbelow(len(all_questions)))
+                    
+                    selected_questions = [all_questions[i] for i in indices]
+                    all_questions = selected_questions
                 
                 if difficulty:
                     all_questions = [q for q in all_questions if normalize_difficulty(q.get("difficulty", "")) == difficulty]
