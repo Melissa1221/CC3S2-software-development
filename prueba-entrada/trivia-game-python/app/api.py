@@ -7,13 +7,40 @@ import random
 import json
 from enum import Enum
 import os
+from contextlib import asynccontextmanager
 
 from app.models.question import Question
 from app.models.db_manager import DBManager
 from app.models.difficulty import DifficultyLevel
 from app.models.game_stats import GameStats
 
-app = FastAPI(title="Trivia Game API", description="API para el juego de trivia", version="1.0.0")
+db_manager = None
+questions_cache = {}
+current_question_id = 1
+quiz_stats = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global db_manager, quiz_stats
+    print("Iniciando aplicación...")
+    db_manager = DBManager()
+    quiz_stats = GameStats()
+    success = await db_manager.connect()
+    if not success:
+        print("⚠️ No se pudo conectar a la base de datos. Usando modo local.")
+    
+    yield  
+    
+    print("Cerrando aplicación...")
+    if db_manager:
+        await db_manager.disconnect()
+
+app = FastAPI(
+    title="Trivia Game API", 
+    description="API para el juego de trivia", 
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +54,20 @@ class DifficultyLevelAPI(str, Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+
+def normalize_difficulty(difficulty_str: str) -> str:
+    difficulty_map = {
+        "fácil": "easy",
+        "facil": "easy",
+        "medio": "medium",
+        "difícil": "hard", 
+        "dificil": "hard",
+        "easy": "easy",
+        "medium": "medium", 
+        "hard": "hard"
+    }
+    normalized = difficulty_str.lower() if difficulty_str else "easy"
+    return difficulty_map.get(normalized, "easy")
 
 class QuestionResponse(BaseModel):
     id: Optional[int] = None
@@ -56,27 +97,6 @@ class QuizSummary(BaseModel):
     accuracy: float
     difficulty_stats: Dict[str, DifficultyStats] = {}
 
-
-db_manager = None
-
-questions_cache = {}
-current_question_id = 1
-quiz_stats = GameStats()
-
-@app.on_event("startup")
-async def startup_event():
-    global db_manager
-    db_manager = DBManager()
-    success = await db_manager.connect()
-    if not success:
-        print("⚠️ No se pudo conectar a la base de datos. Usando modo local.")
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    global db_manager
-    if db_manager:
-        await db_manager.disconnect()
-
 @app.get("/")
 async def root():
     return {"message": "Bienvenido a la API del Juego de Trivia"}
@@ -97,7 +117,6 @@ async def get_random_questions(
         print("Intentando usar base de datos para obtener preguntas")
         db_questions = await db_manager.get_random_questions(count)
         
-        # Solo usamos la base de datos si realmente tiene preguntas
         if db_questions and len(db_questions) > 0:
             use_local_mode = False
             print(f"Base de datos disponible, obteniendo {len(db_questions)} preguntas")
@@ -107,9 +126,7 @@ async def get_random_questions(
         print("Base de datos no disponible, usando modo local")
         
     if not use_local_mode:
-        # Usamos las preguntas de la base de datos
         for q in db_questions:
-            # Skip if difficulty filter is set and doesn't match
             if difficulty and q.difficulty.value != difficulty:
                 continue
                 
@@ -137,19 +154,15 @@ async def get_random_questions(
             
             questions.append(question_data)
     else:
-        # Modo local - Cargar desde JSON
         print("Usando archivo local para obtener preguntas")
         try:
-            # Intentar localizar el archivo questions.json
             json_path = "data/questions.json"
             if not os.path.exists(json_path):
-                # Probar ruta relativa desde la raíz del proyecto
                 json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'questions.json')
                 print(f"Buscando archivo en: {json_path}")
                 
             if not os.path.exists(json_path):
                 print(f"ERROR: No se encontró el archivo 'questions.json' en {json_path}")
-                # Usar preguntas por defecto
                 default_questions = [
                     {
                         "id": current_question_id,
@@ -178,10 +191,8 @@ async def get_random_questions(
                 
                 all_questions = data.get("questions", [])
                 
-                # Validar contenido
                 if not all_questions:
                     print("ERROR: El archivo JSON no contiene preguntas o tiene un formato incorrecto")
-                    # Devolver pregunta por defecto
                     default_question = {
                         "id": current_question_id,
                         "description": "¿Cuál es la capital de Francia?",
@@ -201,57 +212,51 @@ async def get_random_questions(
                     current_question_id += 1
                     return [default_question]
                 
-                # Filter by difficulty if specified
+                if len(all_questions) > count:
+                    print(f"Seleccionando {count} preguntas aleatorias")
+                    all_questions = random.sample(all_questions, count)
+                
                 if difficulty:
-                    filtered_questions = [q for q in all_questions if q.get("difficulty", "easy").lower() == difficulty.value]
-                    if filtered_questions:
-                        all_questions = filtered_questions
-                        print(f"Filtro por dificultad {difficulty.value}: {len(filtered_questions)} preguntas encontradas")
-                    else:
-                        print(f"Advertencia: No se encontraron preguntas con dificultad '{difficulty.value}', usando todas las preguntas")
+                    all_questions = [q for q in all_questions if normalize_difficulty(q.get("difficulty", "")) == difficulty]
                 
-                sample_size = min(count, len(all_questions))
-                if sample_size == 0:
-                    print("ERROR: No hay preguntas disponibles para seleccionar")
-                    return []
-                    
-                print(f"Seleccionando {sample_size} preguntas aleatorias")
-                sample_questions = random.sample(all_questions, sample_size)
-                
-                for q in sample_questions:
+                print(f"Devolviendo {len(all_questions)} preguntas")
+                for q_data in all_questions:
                     question_id = current_question_id
                     current_question_id += 1
                     
-                    # Convert difficulty string to enum
-                    difficulty_str = q.get("difficulty", "easy").lower()
-                    q_difficulty = DifficultyLevel.EASY
-                    if difficulty_str == "medium" or difficulty_str == "medio":
-                        q_difficulty = DifficultyLevel.MEDIUM
-                    elif difficulty_str == "hard" or difficulty_str == "difícil" or difficulty_str == "dificil":
-                        q_difficulty = DifficultyLevel.HARD
+                    difficulty_normalized = normalize_difficulty(q_data.get("difficulty", "easy"))
                     
-                    points = q_difficulty.get_score_multiplier()
+                    points = 1
+                    if difficulty_normalized == "medium":
+                        points = 2
+                    elif difficulty_normalized == "hard":
+                        points = 3
                     
-                    question_data = {
+                    question_response = {
                         "id": question_id,
-                        "description": q["description"],
-                        "options": q["options"],
-                        "difficulty": difficulty_str,
+                        "description": q_data["description"],
+                        "options": q_data["options"],
+                        "difficulty": difficulty_normalized,
                         "points": points
                     }
                     
+                    difficulty_level = DifficultyLevel.EASY
+                    if difficulty_normalized == "medium":
+                        difficulty_level = DifficultyLevel.MEDIUM
+                    elif difficulty_normalized == "hard":
+                        difficulty_level = DifficultyLevel.HARD
+                        
                     questions_cache[question_id] = {
-                        "description": q["description"],
-                        "options": q["options"],
-                        "correct_answer": q["correct_answer"],
-                        "difficulty": q_difficulty,
+                        "description": q_data["description"],
+                        "options": q_data["options"],
+                        "correct_answer": q_data["correct_answer"],
+                        "difficulty": difficulty_level,
                         "points": points
                     }
                     
-                    questions.append(question_data)
+                    questions.append(question_response)
         except Exception as e:
             print(f"ERROR al cargar preguntas desde JSON: {e}")
-            # Preguntas por defecto cuando falla todo lo demás
             default_questions = [
                 {
                     "id": current_question_id,
