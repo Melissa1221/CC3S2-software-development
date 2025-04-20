@@ -1,6 +1,14 @@
 # src/belly.py
 # from src.clock import get_current_time
 
+class CantidadNegativaError(Exception):
+    """Excepción lanzada cuando se intenta comer una cantidad negativa de pepinos."""
+    pass
+
+class CantidadExcesivaError(Exception):
+    """Excepción lanzada cuando se intenta comer demasiados pepinos."""
+    pass
+
 class Belly:
     def __init__(self):
         self.pepinos_comidos = 0
@@ -11,6 +19,13 @@ class Belly:
         self.tiempo_esperado = 0
 
     def comer(self, pepinos):
+        # Validar cantidad de pepinos
+        if pepinos < 0:
+            raise CantidadNegativaError(f"No puedes comer una cantidad negativa de pepinos: {pepinos}")
+        
+        if pepinos > 100:
+            raise CantidadExcesivaError(f"No puedes comer más de 100 pepinos: {pepinos}")
+            
         print(f"He comido {pepinos} pepinos.")
         self.pepinos_comidos += pepinos
 

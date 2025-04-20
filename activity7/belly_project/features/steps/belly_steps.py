@@ -1,6 +1,7 @@
 from behave import given, when, then
 import re
 import random
+from src.belly import CantidadNegativaError, CantidadExcesivaError
 
 # Función para convertir palabras numéricas a números
 def convertir_palabra_a_numero(palabra):
@@ -93,10 +94,21 @@ def generar_tiempo_aleatorio(descripcion):
 
 @given('que he comido {cukes:g} pepinos')
 def step_given_eaten_cukes(context, cukes):
-    context.belly.comer(float(cukes))
+    try:
+        context.belly.comer(float(cukes))
+        # Si llegamos aquí, no hubo excepción
+        context.exception = None
+    except (CantidadNegativaError, CantidadExcesivaError) as e:
+        # Guardar la excepción para verificarla después
+        context.exception = e
+        print(f"Excepción capturada: {str(e)}")
 
 @when('espero {time_description}')
 def step_when_wait_time_description(context, time_description):
+    # Si ya hubo una excepción en un paso anterior, no continuamos
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+        
     time_description = time_description.strip('"').lower()
     print(f"Descripción original: '{time_description}'")
     
@@ -174,9 +186,27 @@ def step_when_wait_time_description(context, time_description):
 
 @then('mi estómago debería gruñir')
 def step_then_belly_should_growl(context):
+    # Si ya hubo una excepción en un paso anterior, no continuamos
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+        
     assert context.belly.esta_gruñendo(), "Se esperaba que el estómago gruñera, pero no lo hizo."
 
 @then('mi estómago no debería gruñir')
 def step_then_belly_should_not_growl(context):
+    # Si ya hubo una excepción en un paso anterior, no continuamos
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+        
     assert not context.belly.esta_gruñendo(), "Se esperaba que el estómago no gruñera, pero lo hizo."
+
+@then('debería ocurrir un error de cantidad negativa')
+def step_then_should_raise_negative_error(context):
+    assert context.exception is not None, "Se esperaba una excepción, pero no ocurrió ninguna."
+    assert isinstance(context.exception, CantidadNegativaError), f"Se esperaba CantidadNegativaError, pero se obtuvo: {type(context.exception)}"
+    
+@then('debería ocurrir un error de cantidad excesiva')
+def step_then_should_raise_excessive_error(context):
+    assert context.exception is not None, "Se esperaba una excepción, pero no ocurrió ninguna."
+    assert isinstance(context.exception, CantidadExcesivaError), f"Se esperaba CantidadExcesivaError, pero se obtuvo: {type(context.exception)}"
 
