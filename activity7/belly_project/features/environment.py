@@ -1,7 +1,31 @@
 from src.belly import Belly
 
 def before_scenario(context, scenario):
-    context.belly = Belly()
+    # Activar modo prueba de escalabilidad solo para escenarios con "1000 pepinos" o similares
+    if "1000 pepinos" in scenario.name or "grandes cantidades" in scenario.name:
+        context.belly = Belly(modo_prueba_escalabilidad=True)
+        print("Modo de prueba de escalabilidad ACTIVADO")
+    else:
+        context.belly = Belly()
+        
+    # Inicializar variable para almacenar excepciones
+    context.exception = None
+    
+    # Registrar tiempo de inicio para mediciones de rendimiento
+    import time
+    context.start_time = time.time()
+
+def after_scenario(context, scenario):
+    # Medir tiempo total de ejecución del escenario
+    import time
+    end_time = time.time()
+    execution_time = (end_time - context.start_time) * 1000  # en milisegundos
+    
+    # Informar sobre tiempos de ejecución largos
+    if execution_time > 100:  # umbral arbitrario de 100ms
+        print(f"Escenario '{scenario.name}' tomó {execution_time:.2f} ms en ejecutarse")
+    else:
+        print(f"Escenario '{scenario.name}' tomó {execution_time:.2f} ms en ejecutarse")
 
 """
 # features/environment.py

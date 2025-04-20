@@ -96,10 +96,10 @@ def generar_tiempo_aleatorio(descripcion):
 def step_given_eaten_cukes(context, cukes):
     try:
         context.belly.comer(float(cukes))
-        # Si llegamos aquí, no hubo excepción
+        # Si llega hasta aquí es porque no hubo excepciones
         context.exception = None
     except (CantidadNegativaError, CantidadExcesivaError) as e:
-        # Guardar la excepción para verificarla después
+        # guardar la excepción para verificarla después
         context.exception = e
         print(f"Excepción capturada: {str(e)}")
 
