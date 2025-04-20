@@ -39,10 +39,20 @@ Característica: Característica del estómago
 
   Escenario: Esperar usando horas en inglés
     Dado que he comido 20 pepinos
-    Cuando espero "two hours and thirty minutes"
+    Cuando espero two hours and thirty minutes
     Entonces mi estómago debería gruñir
 
   Escenario: Esperar usando minutos y segundos en inglés
     Dado que he comido 25 pepinos
-    Cuando espero "one hour and forty five minutes and thirty seconds"
+    Cuando espero one hour and forty five minutes and thirty seconds
+    Entonces mi estómago debería gruñir
+
+  Escenario: Comer pepinos y esperar un tiempo aleatorio
+    Dado que he comido 25 pepinos
+    Cuando espero un tiempo aleatorio entre 1 y 3 horas
+    Entonces mi estómago debería gruñir
+
+  Escenario: Comer pepinos y esperar un tiempo aleatorio en inglés
+    Dado que he comido 25 pepinos
+    Cuando espero a random time between 2 and 5 hours
     Entonces mi estómago debería gruñir

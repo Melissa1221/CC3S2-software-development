@@ -1,5 +1,6 @@
 from behave import given, when, then
 import re
+import random
 
 # Función para convertir palabras numéricas a números
 def convertir_palabra_a_numero(palabra):
@@ -39,6 +40,57 @@ def convertir_palabra_a_numero_ingles(palabra):
         }
         return numeros_en_ingles.get(palabra.lower(), 0)
 
+# Función para manejar tiempos aleatorios 
+def generar_tiempo_aleatorio(descripcion):
+    # Patrón para "entre X y Y horas" o "un tiempo aleatorio entre X y Y horas"
+    patron_esp = re.compile(r'(?:un tiempo aleatorio )?entre (\d+|[\w]+) y (\d+|[\w]+) horas')
+    patron_ing = re.compile(r'(?:a random time )?between (\d+|[\w]+) and (\d+|[\w]+) hours')
+    
+    # Verificar si es español o inglés y extraer valores
+    match_esp = patron_esp.search(descripcion.lower())
+    match_ing = patron_ing.search(descripcion.lower())
+    
+    if match_esp:
+        # Descripción en español
+        min_valor = match_esp.group(1)
+        max_valor = match_esp.group(2)
+        
+        # Convertir a números
+        if min_valor.isdigit():
+            min_horas = int(min_valor)
+        else:
+            min_horas = convertir_palabra_a_numero(min_valor)
+            
+        if max_valor.isdigit():
+            max_horas = int(max_valor)
+        else:
+            max_horas = convertir_palabra_a_numero(max_valor)
+    
+    elif match_ing:
+        # Descripción en inglés
+        min_valor = match_ing.group(1)
+        max_valor = match_ing.group(2)
+        
+        # Convertir a números
+        if min_valor.isdigit():
+            min_horas = int(min_valor)
+        else:
+            min_horas = convertir_palabra_a_numero_ingles(min_valor)
+            
+        if max_valor.isdigit():
+            max_horas = int(max_valor)
+        else:
+            max_horas = convertir_palabra_a_numero_ingles(max_valor)
+    
+    else:
+        raise ValueError(f"No se reconoce el formato de tiempo aleatorio: {descripcion}")
+    
+    # Generar tiempo aleatorio en el rango 
+    tiempo_aleatorio = random.uniform(min_horas, max_horas)
+    print(f"Tiempo aleatorio generado: {tiempo_aleatorio:.2f} horas")
+    
+    return tiempo_aleatorio
+
 @given('que he comido {cukes:g} pepinos')
 def step_given_eaten_cukes(context, cukes):
     context.belly.comer(float(cukes))
@@ -54,6 +106,19 @@ def step_when_wait_time_description(context, time_description):
         es_ingles = True
         print("Detectado como inglés")
   
+    # Detectar primero si es un tiempo aleatorio
+    if "entre" in time_description and "horas" in time_description:
+        # Tiempo aleatorio en español
+        tiempo_total = generar_tiempo_aleatorio(time_description)
+        context.belly.esperar(tiempo_total)
+        return
+    elif "between" in time_description and "hours" in time_description:
+        # Tiempo aleatorio en inglés
+        tiempo_total = generar_tiempo_aleatorio(time_description)
+        context.belly.esperar(tiempo_total)
+        return
+    
+    # Si no es tiempo aleatorio, continuar con el procesamiento normal
     if es_ingles:
         time_description = time_description.replace('and', ' ')
     else:
