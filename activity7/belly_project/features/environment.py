@@ -21,11 +21,7 @@ def after_scenario(context, scenario):
     end_time = time.time()
     execution_time = (end_time - context.start_time) * 1000  # en milisegundos
     
-    # Informar sobre tiempos de ejecución largos
-    if execution_time > 100:  # umbral arbitrario de 100ms
-        print(f"Escenario '{scenario.name}' tomó {execution_time:.2f} ms en ejecutarse")
-    else:
-        print(f"Escenario '{scenario.name}' tomó {execution_time:.2f} ms en ejecutarse")
+    print(f"Escenario '{scenario.name}' tomó {execution_time:.2f} ms en ejecutarse")
 
 """
 # features/environment.py
