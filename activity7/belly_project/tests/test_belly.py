@@ -49,3 +49,21 @@ def test_pepinos_disponibles():
   
     belly.comer(3)
     assert belly.pepinos_disponibles() == 0 
+
+def test_esta_gruñendo_limite_exacto():
+    belly = Belly()
+    belly.comer(11)
+    belly.esperar(1.5)
+    assert belly.esta_gruñendo() == True
+    
+def test_esta_gruñendo_tiempo_exacto():
+    belly = Belly()
+    belly.comer(15)
+    belly.esperar(1.5)
+    assert belly.esta_gruñendo() == True
+    
+def test_esta_gruñendo_ambos_limites_fallan():
+    belly = Belly()
+    belly.comer(10)
+    belly.esperar(1.4)
+    assert belly.esta_gruñendo() == False 

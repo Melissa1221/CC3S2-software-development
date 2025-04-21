@@ -64,6 +64,12 @@ jobs:
         python -m pytest tests/test_belly.py::test_pepinos_restantes tests/test_belly.py::test_pepinos_disponibles -v
         behave features/ --tags=@tdd_sequence
 
+    - name: Run Refactoring tests with coverage
+      run: |
+        cd belly_project
+        python -m pytest tests/test_belly.py::test_esta_gruñendo_limite_exacto tests/test_belly.py::test_esta_gruñendo_tiempo_exacto tests/test_belly.py::test_esta_gruñendo_ambos_limites_fallan -v --cov=src.belly --cov-report=term
+        behave features/ --tags=@refactorizacion
+
     - name: Upload coverage reports to Codecov 
       uses: codecov/codecov-action@v5
       with:

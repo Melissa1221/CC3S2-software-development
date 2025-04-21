@@ -149,50 +149,45 @@ def step_given_eaten_cukes(context, cukes):
 
 @when('espero {time_description}')
 def step_when_wait_time_description(context, time_description):
-    # Si ya hubo una excepción en un paso anterior, no continuamos
     if hasattr(context, 'exception') and context.exception is not None:
         return
         
     time_description = time_description.strip('"').lower()
     print(f"Descripción original: '{time_description}'")
     
-    # Detectar si es inglés o español
     es_ingles = False
     if "hour" in time_description or "minute" in time_description or "second" in time_description:
         es_ingles = True
         print("Detectado como inglés")
   
-    # Obtener información del escenario completo para la función de tiempo aleatorio
     info_escenario = ""
     if hasattr(context, '_runner') and hasattr(context._runner, 'feature'):
         for escenario in context._runner.feature.scenarios:
             if escenario.name == context.scenario.name:
-                # Recopilar todos los pasos del escenario
                 for step in escenario.steps:
                     info_escenario += step.name + " "
                 break
   
-    # Detectar primero si es un tiempo aleatorio
     if "entre" in time_description and "horas" in time_description:
-        # Tiempo aleatorio en español
         tiempo_total = generar_tiempo_aleatorio(time_description + " " + info_escenario)
         context.belly.esperar(tiempo_total)
         return
     elif "between" in time_description and "hours" in time_description:
-        # Tiempo aleatorio en inglés
         tiempo_total = generar_tiempo_aleatorio(time_description + " " + info_escenario)
         context.belly.esperar(tiempo_total)
         return
     
-    # Manejar casos especiales como 'media hora' o 'half hour'
     if time_description == 'media hora' or time_description == 'half hour':
         total_time_in_hours = 0.5
-    # Verificar si contiene formato complejo
     elif "," in time_description:
-        # Usar el procesador mejorado para manejo de expresiones complejas
         total_time_in_hours = procesar_descripcion_tiempo(time_description, es_ingles)
+    # Verificar si es un número directo seguido de horas/hour
+    elif re.match(r'^(\d+\.?\d*)\s*horas?$', time_description) or re.match(r'^(\d+\.?\d*)\s*hours?$', time_description):
+        match = re.match(r'^(\d+\.?\d*)\s*(?:horas?|hours?)$', time_description)
+        if match:
+            total_time_in_hours = float(match.group(1))
+            print(f"Tiempo numérico directo: {total_time_in_hours} horas")
     else:
-        # continuar con el procesamiento normal previo
         if es_ingles:
             time_description = time_description.replace('and', ' ')
         else:
@@ -201,18 +196,17 @@ def step_when_wait_time_description(context, time_description):
         time_description = time_description.strip()
         print(f"Descripción normalizada: '{time_description}'")
 
-        # Definir patrones para ambos idiomas
         if es_ingles:
             pattern = re.compile(
-                r'(?:(\w+(?:\s+\w+)?|\d+)\s*hours?)?\s*'    # horas en inglés 
-                r'(?:(\w+(?:\s+\w+)?|\d+)\s*minutes?)?\s*'  # minutos en inglés 
-                r'(?:(\w+(?:\s+\w+)?|\d+)\s*seconds?)?'     # segundos en inglés 
+                r'(?:(\w+(?:\s+\w+)?|\d+)\s*hours?)?\s*'
+                r'(?:(\w+(?:\s+\w+)?|\d+)\s*minutes?)?\s*'
+                r'(?:(\w+(?:\s+\w+)?|\d+)\s*seconds?)?'
             )
         else:
             pattern = re.compile(
-                r'(?:(\w+|\d+)\s*horas?)?\s*'    # horas en español
-                r'(?:(\w+|\d+)\s*minutos?)?\s*'  # minutos en español
-                r'(?:(\w+|\d+)\s*segundos?)?'    # segundos en español
+                r'(?:(\w+|\d+)\s*horas?)?\s*'
+                r'(?:(\w+|\d+)\s*minutos?)?\s*'
+                r'(?:(\w+|\d+)\s*segundos?)?'
             )
         
         match = pattern.match(time_description)
@@ -223,7 +217,6 @@ def step_when_wait_time_description(context, time_description):
             
             print(f"Grupos capturados: horas='{hours_word}', minutos='{minutes_word}', segundos='{seconds_word}'")
             
-            # Convertir según el idioma detectado
             if es_ingles:
                 hours = convertir_palabra_a_numero_ingles(hours_word)
                 minutes = convertir_palabra_a_numero_ingles(minutes_word)
@@ -238,7 +231,6 @@ def step_when_wait_time_description(context, time_description):
             total_time_in_hours = hours + (minutes / 60) + (seconds / 3600)
             print(f"Tiempo total en horas: {total_time_in_hours}")
         else:
-            # Intentar con el procesador mejorado como último recurso
             total_time_in_hours = procesar_descripcion_tiempo(time_description, es_ingles)
 
     context.belly.esperar(total_time_in_hours)
