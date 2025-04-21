@@ -144,3 +144,21 @@ Característica: Característica del estómago
     Cuando consulto los pepinos disponibles
     Entonces debería informarme que puedo comer 3 pepinos más
     
+  @refactorizacion @language_spanish
+  Escenario: Verificar el comportamiento de gruñido en el límite exacto
+    Dado que he comido 11 pepinos
+    Cuando espero 1.5 horas
+    Entonces mi estómago debería gruñir
+    
+  @refactorizacion @language_spanish
+  Escenario: Verificar el comportamiento de gruñido con tiempo exacto
+    Dado que he comido 15 pepinos
+    Cuando espero 1.5 horas
+    Entonces mi estómago debería gruñir
+    
+  @refactorizacion @language_spanish
+  Escenario: Verificar que no gruñe cuando ambos límites fallan
+    Dado que he comido 10 pepinos
+    Cuando espero 1.4 horas
+    Entonces mi estómago no debería gruñir
+    
