@@ -99,15 +99,14 @@ def generar_tiempo_aleatorio(descripcion):
 # Función mejorada para procesar descripciones complejas de tiempo
 def procesar_descripcion_tiempo(descripcion, es_ingles=False):
     print(f"Procesando descripción compleja: '{descripcion}'")
-    # separar la descripción en componentes (hora, minuto, segundo)
-    componentes = []
-    # dividir por componentes
     if es_ingles:
-        componentes = re.findall(r'(\d+|\w+(?:\s+\w+)?)\s*(hours?|minutes?|seconds?)', descripcion) # componentes en inglés 
+        pattern = r'(\d+|\b\w+\b(?:\s+\b\w+\b)?)\s*(hours?|minutes?|seconds?)'
     else:
-        componentes = re.findall(r'(\d+|\w+(?:\s+\w+)?)\s*(horas?|minutos?|segundos?)', descripcion) # Patrón para componentes en español
+        pattern = r'(\d+|\b\w+\b(?:\s+\b\w+\b)?)\s*(horas?|minutos?|segundos?)'
+        
+    componentes = re.findall(pattern, descripcion)
     print(f"Componentes encontrados: {componentes}")
-    
+
     horas = 0
     minutos = 0
     segundos = 0
