@@ -53,6 +53,11 @@ jobs:
         cd belly_project
         behave features/ --tags=@performance
 
+    - name: Run User Story BDD tests
+      run: |
+        cd belly_project
+        behave features/ --tags=@historia_usuario
+
     - name: Upload coverage reports to Codecov 
       uses: codecov/codecov-action@v5
       with:
