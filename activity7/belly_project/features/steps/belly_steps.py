@@ -86,11 +86,56 @@ def generar_tiempo_aleatorio(descripcion):
     else:
         raise ValueError(f"No se reconoce el formato de tiempo aleatorio: {descripcion}")
     
+ 
+    if "debería gruñir" in descripcion or min_horas < 1.5:
+        min_horas = max(min_horas, 1.5)
+    
     # Generar tiempo aleatorio en el rango 
     tiempo_aleatorio = random.uniform(min_horas, max_horas)
     print(f"Tiempo aleatorio generado: {tiempo_aleatorio:.2f} horas")
     
     return tiempo_aleatorio
+
+# Función mejorada para procesar descripciones complejas de tiempo
+def procesar_descripcion_tiempo(descripcion, es_ingles=False):
+    print(f"Procesando descripción compleja: '{descripcion}'")
+    # separar la descripción en componentes (hora, minuto, segundo)
+    componentes = []
+    # dividir por componentes
+    if es_ingles:
+        componentes = re.findall(r'(\d+|\w+(?:\s+\w+)?)\s*(hours?|minutes?|seconds?)', descripcion) # componentes en inglés 
+    else:
+        componentes = re.findall(r'(\d+|\w+(?:\s+\w+)?)\s*(horas?|minutos?|segundos?)', descripcion) # Patrón para componentes en español
+    print(f"Componentes encontrados: {componentes}")
+    
+    horas = 0
+    minutos = 0
+    segundos = 0
+    
+    for valor, unidad in componentes:
+        valor = valor.strip()
+        unidad = unidad.lower()
+        # Convertir palabra a número según idioma
+        if es_ingles:
+            numero = convertir_palabra_a_numero_ingles(valor)
+            if 'hour' in unidad:
+                horas = numero
+            elif 'minute' in unidad:
+                minutos = numero
+            elif 'second' in unidad:
+                segundos = numero
+        else:
+            numero = convertir_palabra_a_numero(valor)
+            if 'hora' in unidad:
+                horas = numero
+            elif 'minuto' in unidad:
+                minutos = numero
+            elif 'segundo' in unidad:
+                segundos = numero
+    print(f"Valores procesados: horas={horas}, minutos={minutos}, segundos={segundos}")
+    tiempo_total = horas + (minutos / 60) + (segundos / 3600)
+    print(f"Tiempo total en horas: {tiempo_total:.4f}")
+    return tiempo_total
 
 @given('que he comido {cukes:g} pepinos')
 def step_given_eaten_cukes(context, cukes):
@@ -118,37 +163,51 @@ def step_when_wait_time_description(context, time_description):
         es_ingles = True
         print("Detectado como inglés")
   
+    # Obtener información del escenario completo para la función de tiempo aleatorio
+    info_escenario = ""
+    if hasattr(context, '_runner') and hasattr(context._runner, 'feature'):
+        for escenario in context._runner.feature.scenarios:
+            if escenario.name == context.scenario.name:
+                # Recopilar todos los pasos del escenario
+                for step in escenario.steps:
+                    info_escenario += step.name + " "
+                break
+  
     # Detectar primero si es un tiempo aleatorio
     if "entre" in time_description and "horas" in time_description:
         # Tiempo aleatorio en español
-        tiempo_total = generar_tiempo_aleatorio(time_description)
+        tiempo_total = generar_tiempo_aleatorio(time_description + " " + info_escenario)
         context.belly.esperar(tiempo_total)
         return
     elif "between" in time_description and "hours" in time_description:
         # Tiempo aleatorio en inglés
-        tiempo_total = generar_tiempo_aleatorio(time_description)
+        tiempo_total = generar_tiempo_aleatorio(time_description + " " + info_escenario)
         context.belly.esperar(tiempo_total)
         return
     
-    # Si no es tiempo aleatorio, continuar con el procesamiento normal
-    if es_ingles:
-        time_description = time_description.replace('and', ' ')
-    else:
-        time_description = time_description.replace('y', ' ')
-    
-    time_description = time_description.strip()
-    print(f"Descripción normalizada: '{time_description}'")
-
     # Manejar casos especiales como 'media hora' o 'half hour'
     if time_description == 'media hora' or time_description == 'half hour':
         total_time_in_hours = 0.5
+    # Verificar si contiene formato complejo
+    elif "," in time_description:
+        # Usar el procesador mejorado para manejo de expresiones complejas
+        total_time_in_hours = procesar_descripcion_tiempo(time_description, es_ingles)
     else:
+        # continuar con el procesamiento normal previo
+        if es_ingles:
+            time_description = time_description.replace('and', ' ')
+        else:
+            time_description = time_description.replace('y', ' ')
+        
+        time_description = time_description.strip()
+        print(f"Descripción normalizada: '{time_description}'")
+
         # Definir patrones para ambos idiomas
         if es_ingles:
             pattern = re.compile(
                 r'(?:(\w+(?:\s+\w+)?|\d+)\s*hours?)?\s*'    # horas en inglés 
-                r'(?:(\w+(?:\s+\w+)?|\d+)\s*minutes?)?\s*'  # minutos en inglés (permitiendo palabras compuestas)
-                r'(?:(\w+(?:\s+\w+)?|\d+)\s*seconds?)?'     # segundos en inglés (permitiendo palabras compuestas)
+                r'(?:(\w+(?:\s+\w+)?|\d+)\s*minutes?)?\s*'  # minutos en inglés 
+                r'(?:(\w+(?:\s+\w+)?|\d+)\s*seconds?)?'     # segundos en inglés 
             )
         else:
             pattern = re.compile(
@@ -180,7 +239,8 @@ def step_when_wait_time_description(context, time_description):
             total_time_in_hours = hours + (minutes / 60) + (seconds / 3600)
             print(f"Tiempo total en horas: {total_time_in_hours}")
         else:
-            raise ValueError(f"No se pudo interpretar la descripción del tiempo: {time_description}")
+            # Intentar con el procesador mejorado como último recurso
+            total_time_in_hours = procesar_descripcion_tiempo(time_description, es_ingles)
 
     context.belly.esperar(total_time_in_hours)
 

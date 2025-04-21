@@ -74,3 +74,18 @@ Característica: Característica del estómago
     Dado que he comido 5000 pepinos
     Cuando espero 20 horas
     Entonces mi estómago debería gruñir
+
+  Escenario: Manejar tiempos complejos con comas
+    Dado que he comido 50 pepinos
+    Cuando espero "1 hora, 30 minutos y 45 segundos"
+    Entonces mi estómago debería gruñir
+    
+  Escenario: Manejar tiempos complejos con diferentes separadores
+    Dado que he comido 40 pepinos
+    Cuando espero "2 horas, 15 minutos, 30 segundos"
+    Entonces mi estómago debería gruñir
+    
+  Escenario: Manejar tiempos complejos en inglés con comas
+    Dado que he comido 45 pepinos
+    Cuando espero "3 hours, 10 minutes, 20 seconds"
+    Entonces mi estómago debería gruñir
