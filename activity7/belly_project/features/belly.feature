@@ -113,4 +113,22 @@ Característica: Característica del estómago
     Dado que he comido 15 pepinos
     Cuando espero 2 horas
     Entonces mi estómago debería gruñir
+
+  @historia_usuario @language_spanish
+  Escenario: Saber cuántos pepinos puedo comer antes de gruñir
+    Dado que he comido 8 pepinos
+    Cuando pregunto cuántos pepinos más puedo comer
+    Entonces debería decirme que puedo comer 2 pepinos más
+
+  @historia_usuario @language_spanish
+  Escenario: Conocer cuánto tiempo falta para que gruña
+    Dado que he comido 15 pepinos
+    Cuando pregunto cuánto tiempo falta para que gruña
+    Entonces debería decirme que gruñirá en 1.5 horas
+
+  @historia_usuario @language_spanish 
+  Escenario: Predecir si el estómago gruñirá después de un tiempo
+    Dado que he comido 12 pepinos
+    Cuando pregunto si gruñirá después de 2 horas
+    Entonces debería confirmar que sí gruñirá
     

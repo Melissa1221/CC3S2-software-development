@@ -269,3 +269,62 @@ def step_then_should_raise_excessive_error(context):
     assert context.exception is not None, "Se esperaba una excepción, pero no ocurrió ninguna."
     assert isinstance(context.exception, CantidadExcesivaError), f"Se esperaba CantidadExcesivaError, pero se obtuvo: {type(context.exception)}"
 
+@when('pregunto cuántos pepinos más puedo comer')
+def step_when_ask_cukes_left(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    context.pepinos_restantes = 10 - context.belly.pepinos_comidos
+    if context.pepinos_restantes < 0:
+        context.pepinos_restantes = 0
+
+@then('debería decirme que puedo comer {cantidad:d} pepinos más')
+def step_then_can_eat_more(context, cantidad):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.pepinos_restantes == cantidad, f"Se esperaba poder comer {cantidad} pepinos más, pero se puede comer {context.pepinos_restantes}"
+
+@when('pregunto cuánto tiempo falta para que gruña')
+def step_when_ask_time_until_growl(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    if context.belly.pepinos_comidos <= 10:
+        context.tiempo_restante = None
+    else:
+        tiempo_faltante = max(0, 1.5 - context.belly.tiempo_esperado)
+        context.tiempo_restante = tiempo_faltante
+
+@then('debería decirme que gruñirá en {horas:g} horas')
+def step_then_will_growl_in(context, horas):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.tiempo_restante is not None, "El estómago no gruñirá con esta cantidad de pepinos"
+    assert abs(context.tiempo_restante - horas) < 0.01, f"Se esperaba que gruñera en {horas} horas, pero gruñirá en {context.tiempo_restante} horas"
+
+@when('pregunto si gruñirá después de {horas:g} horas')
+def step_when_ask_if_will_growl(context, horas):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+  
+    tiempo_total = context.belly.tiempo_esperado + horas
+    pepinos = context.belly.pepinos_comidos
+    
+    context.prediccion_gruñido = tiempo_total >= 1.5 and pepinos > 10
+
+@then('debería confirmar que sí gruñirá')
+def step_then_confirm_will_growl(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.prediccion_gruñido is True, "Se esperaba que el estómago gruñera, pero la predicción dice que no gruñirá"
+
+@then('debería confirmar que no gruñirá')
+def step_then_confirm_will_not_growl(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.prediccion_gruñido is False, "Se esperaba que el estómago no gruñera, pero la predicción dice que sí gruñirá"
+
