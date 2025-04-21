@@ -67,3 +67,21 @@ def test_esta_gruñendo_ambos_limites_fallan():
     belly.comer(10)
     belly.esperar(1.4)
     assert belly.esta_gruñendo() == False 
+
+def test_tiempo_digestion_pepinos():
+    belly = Belly()
+    belly.comer(20)
+    assert belly.tiempo_digestion() == 4.0
+    
+    belly.comer(10)
+    assert belly.tiempo_digestion() == 6.0
+    
+def test_tiempo_digestion_cero_pepinos():
+    belly = Belly()
+    assert belly.tiempo_digestion() == 0.0
+    
+def test_tiempo_digestion_ya_digerido():
+    belly = Belly()
+    belly.comer(5)
+    belly.esperar(5)
+    assert belly.tiempo_digestion() == 0.0 

@@ -12,6 +12,7 @@ class CantidadExcesivaError(Exception):
 class Belly:
     LIMITE_GRUÑIDO_PEPINOS = 10
     TIEMPO_MINIMO_GRUÑIDO = 1.5
+    TIEMPO_DIGESTION_POR_PEPINO = 0.2
     
     def __init__(self, modo_prueba_escalabilidad=False):
         self.pepinos_comidos = 0
@@ -71,3 +72,11 @@ class Belly:
     def pepinos_disponibles(self):
         disponibles = max(0, self.LIMITE_GRUÑIDO_PEPINOS - self.pepinos_comidos)
         return disponibles
+        
+    def tiempo_digestion(self):
+        if self.pepinos_comidos <= 0:
+            return 0.0
+            
+        tiempo_total = self.pepinos_comidos * self.TIEMPO_DIGESTION_POR_PEPINO
+        tiempo_restante = max(0.0, tiempo_total - self.tiempo_esperado)
+        return round(tiempo_restante, 1)

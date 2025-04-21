@@ -348,3 +348,17 @@ def step_then_available_cukes(context, cantidad):
     
     assert context.pepinos_disponibles == cantidad, f"Se esperaba poder comer {cantidad} pepinos más, pero se pueden comer {context.pepinos_disponibles}"
 
+@when('consulto el tiempo de digestión')
+def step_when_check_digestion_time(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+        
+    context.tiempo_digestion = context.belly.tiempo_digestion()
+
+@then('me debería informar que faltan {horas:g} horas para digerir completamente')
+def step_then_digestion_time(context, horas):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+        
+    assert context.tiempo_digestion == horas, f"Se esperaba un tiempo de digestión de {horas} horas, pero se obtuvo {context.tiempo_digestion} horas"
+
