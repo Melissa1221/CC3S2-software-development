@@ -33,4 +33,19 @@ def test_modo_prueba_escalabilidad():
     belly = Belly(modo_prueba_escalabilidad=True)
     belly.comer(1000)  # No debería lanzar excepción
     belly.esperar(2)
-    assert belly.esta_gruñendo() == True 
+    assert belly.esta_gruñendo() == True
+
+def test_pepinos_restantes():
+    belly = Belly()
+    belly.comer(15)
+    assert belly.pepinos_restantes() == 15
+    belly.comer(7)
+    assert belly.pepinos_restantes() == 22
+    
+def test_pepinos_disponibles():
+    belly = Belly()
+    belly.comer(8)
+    assert belly.pepinos_disponibles() == 2
+  
+    belly.comer(3)
+    assert belly.pepinos_disponibles() == 0 

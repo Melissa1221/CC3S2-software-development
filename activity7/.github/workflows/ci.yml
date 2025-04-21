@@ -58,6 +58,12 @@ jobs:
         cd belly_project
         behave features/ --tags=@historia_usuario
 
+    - name: Run TDD-BDD Sequence tests
+      run: |
+        cd belly_project
+        python -m pytest tests/test_belly.py::test_pepinos_restantes tests/test_belly.py::test_pepinos_disponibles -v
+        behave features/ --tags=@tdd_sequence
+
     - name: Upload coverage reports to Codecov 
       uses: codecov/codecov-action@v5
       with:
