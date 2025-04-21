@@ -131,4 +131,16 @@ Característica: Característica del estómago
     Dado que he comido 12 pepinos
     Cuando pregunto si gruñirá después de 2 horas
     Entonces debería confirmar que sí gruñirá
+
+  @tdd_sequence @language_spanish
+  Escenario: Conocer cuántos pepinos he comido
+    Dado que he comido 15 pepinos
+    Cuando consulto los pepinos que he comido
+    Entonces debería informarme que he comido 15 pepinos
+    
+  @tdd_sequence @language_spanish
+  Escenario: Saber cuántos pepinos puedo comer sin llegar al límite
+    Dado que he comido 7 pepinos
+    Cuando consulto los pepinos disponibles
+    Entonces debería informarme que puedo comer 3 pepinos más
     

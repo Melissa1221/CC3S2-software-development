@@ -328,3 +328,31 @@ def step_then_confirm_will_not_growl(context):
     
     assert context.prediccion_gruñido is False, "Se esperaba que el estómago no gruñera, pero la predicción dice que sí gruñirá"
 
+@when('consulto los pepinos que he comido')
+def step_when_check_cukes_eaten(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    context.total_pepinos = context.belly.pepinos_restantes()
+
+@then('debería informarme que he comido {cantidad:d} pepinos')
+def step_then_eaten_cukes(context, cantidad):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.total_pepinos == cantidad, f"Se esperaba haber comido {cantidad} pepinos, pero se comieron {context.total_pepinos}"
+
+@when('consulto los pepinos disponibles')
+def step_when_check_available_cukes(context):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    context.pepinos_disponibles = context.belly.pepinos_disponibles()
+
+@then('debería informarme que puedo comer {cantidad:d} pepinos más')
+def step_then_available_cukes(context, cantidad):
+    if hasattr(context, 'exception') and context.exception is not None:
+        return
+    
+    assert context.pepinos_disponibles == cantidad, f"Se esperaba poder comer {cantidad} pepinos más, pero se pueden comer {context.pepinos_disponibles}"
+
