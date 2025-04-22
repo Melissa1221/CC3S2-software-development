@@ -1,5 +1,6 @@
 import pytest
 from src.user_manager import UserManager, UserAlreadyExistsError, UserNotFoundError
+from unittest.mock import MagicMock
 
 def test_agregar_usuario_exitoso():
     # Arrange
@@ -38,3 +39,16 @@ def test_autenticar_usuario_exitoso_con_hash():
 
     # Assert
     assert autenticado, "El usuario debería autenticarse correctamente con la contraseña correcta."
+
+def test_hash_service_es_llamado_al_agregar_usuario():
+    # Arrange
+    mock_hash_service = MagicMock()
+    manager = UserManager(hash_service=mock_hash_service)
+    username = "spyUser"
+    password = "spyPass"
+
+    # Act
+    manager.add_user(username, password)
+
+    # Assert
+    mock_hash_service.hash.assert_called_once_with(password)
