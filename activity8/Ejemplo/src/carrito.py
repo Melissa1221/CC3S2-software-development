@@ -137,6 +137,27 @@ class Carrito:
         """
         return self.items
         
+    def obtener_items_ordenados(self, criterio):
+        """
+        Devuelve una lista ordenada de los items del carrito según el criterio especificado.
+        
+        Args:
+            criterio: Criterio de ordenamiento ('precio' o 'nombre').
+            
+        Returns:
+            Lista ordenada de items.
+            
+        Raises:
+            ValueError: Si el criterio no es válido.
+        """
+        if criterio not in ["precio", "nombre"]:
+            raise ValueError("Criterio de ordenamiento no válido. Debe ser 'precio' o 'nombre'")
+            
+        if criterio == "precio":
+            return sorted(self.items, key=lambda item: item.producto.precio)
+        else:  # criterio == "nombre"
+            return sorted(self.items, key=lambda item: item.producto.nombre)
+        
     def vaciar(self):
         """
         Elimina todos los items del carrito.

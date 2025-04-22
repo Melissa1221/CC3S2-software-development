@@ -363,3 +363,73 @@ def test_actualizar_cantidad_excede_stock():
     with pytest.raises(ValueError) as excinfo:
         carrito.actualizar_cantidad(producto, nueva_cantidad=5)
     assert "No hay suficiente stock" in str(excinfo.value)
+
+def test_obtener_items_ordenados_por_precio():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan varios productos con diferentes precios.
+    Act: Se solicitan los items ordenados por precio.
+    Assert: Se verifica que la lista devuelta está ordenada de menor a mayor precio.
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = Producto("Ratón", 25.00, stock=10)
+    producto2 = Producto("Teclado", 50.00, stock=10)
+    producto3 = Producto("Monitor", 200.00, stock=10)
+    
+    # Agregamos los productos en orden diferente al esperado en el resultado
+    carrito.agregar_producto(producto3, cantidad=1)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+    
+    # Act
+    items_ordenados = carrito.obtener_items_ordenados("precio")
+    
+    # Assert
+    assert len(items_ordenados) == 3
+    assert items_ordenados[0].producto.nombre == "Ratón"
+    assert items_ordenados[1].producto.nombre == "Teclado"
+    assert items_ordenados[2].producto.nombre == "Monitor"
+
+def test_obtener_items_ordenados_por_nombre():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan varios productos con diferentes nombres.
+    Act: Se solicitan los items ordenados por nombre.
+    Assert: Se verifica que la lista devuelta está ordenada alfabéticamente por nombre.
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = Producto("Monitor", 200.00, stock=10)
+    producto2 = Producto("Ratón", 25.00, stock=10)
+    producto3 = Producto("Teclado", 50.00, stock=10)
+    
+    # Agregamos los productos en orden diferente al esperado en el resultado
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto3, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+    
+    # Act
+    items_ordenados = carrito.obtener_items_ordenados("nombre")
+    
+    # Assert
+    assert len(items_ordenados) == 3
+    assert items_ordenados[0].producto.nombre == "Monitor"
+    assert items_ordenados[1].producto.nombre == "Ratón"
+    assert items_ordenados[2].producto.nombre == "Teclado"
+
+def test_obtener_items_ordenados_criterio_invalido():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agrega un producto.
+    Act & Assert: Se verifica que se lanza una excepción al solicitar items ordenados con un criterio inválido.
+    """
+    # Arrange
+    carrito = Carrito()
+    producto = Producto("Laptop", 800.00, stock=5)
+    carrito.agregar_producto(producto, cantidad=1)
+    
+    # Act & Assert
+    with pytest.raises(ValueError) as excinfo:
+        carrito.obtener_items_ordenados("color")
+    assert "Criterio de ordenamiento no válido" in str(excinfo.value)
