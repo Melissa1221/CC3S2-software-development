@@ -162,3 +162,22 @@ Característica: Característica del estómago
     Cuando espero 1.4 horas
     Entonces mi estómago no debería gruñir
     
+  @nueva_funcionalidad @language_spanish
+  Escenario: Calcular el tiempo de digestión de pepinos
+    Dado que he comido 20 pepinos
+    Cuando consulto el tiempo de digestión
+    Entonces me debería informar que faltan 4 horas para digerir completamente
+    
+  @nueva_funcionalidad @language_spanish  
+  Escenario: Calcular el tiempo de digestión después de esperar
+    Dado que he comido 15 pepinos
+    Cuando espero 2 horas
+    Y consulto el tiempo de digestión
+    Entonces me debería informar que faltan 1 horas para digerir completamente
+    
+  @nueva_funcionalidad @language_spanish
+  Escenario: Tiempo de digestión con el estómago vacío
+    Dado que he comido 0 pepinos
+    Cuando consulto el tiempo de digestión
+    Entonces me debería informar que faltan 0 horas para digerir completamente
+    

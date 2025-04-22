@@ -1,3 +1,7 @@
-behave
-pytest
-pytest-cov
+behave>=1.2.6
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-html>=3.2.0
+behave-html-formatter>=0.1.0
+flake8>=6.0.0
+black>=23.3.0
