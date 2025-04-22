@@ -1,12 +1,13 @@
 # src/carrito.py
 
 class Producto:
-    def __init__(self, nombre, precio):
+    def __init__(self, nombre, precio, stock=0):
         self.nombre = nombre
         self.precio = precio
+        self.stock = stock
 
     def __repr__(self):
-        return f"Producto({self.nombre}, {self.precio})"
+        return f"Producto({self.nombre}, {self.precio}, stock={self.stock})"
 
 
 class ItemCarrito:
@@ -28,7 +29,22 @@ class Carrito:
     def agregar_producto(self, producto, cantidad=1):
         """
         Agrega un producto al carrito. Si el producto ya existe, incrementa la cantidad.
+        Verifica que la cantidad a agregar no supere el stock disponible.
+        
+        Raises:
+            ValueError: Si la cantidad a agregar supera el stock disponible.
         """
+        # Verificar stock disponible
+        cantidad_actual = 0
+        for item in self.items:
+            if item.producto.nombre == producto.nombre:
+                cantidad_actual = item.cantidad
+                break
+                
+        if cantidad_actual + cantidad > producto.stock:
+            raise ValueError(f"No hay suficiente stock. Disponible: {producto.stock}, En carrito: {cantidad_actual}, Solicitado: {cantidad}")
+            
+        # Si hay suficiente stock, agregar producto
         for item in self.items:
             if item.producto.nombre == producto.nombre:
                 item.cantidad += cantidad
@@ -58,6 +74,11 @@ class Carrito:
         """
         if nueva_cantidad < 0:
             raise ValueError("La cantidad no puede ser negativa")
+            
+        # Verificar stock disponible
+        if nueva_cantidad > producto.stock:
+            raise ValueError(f"No hay suficiente stock. Disponible: {producto.stock}, Solicitado: {nueva_cantidad}")
+            
         for item in self.items:
             if item.producto.nombre == producto.nombre:
                 if nueva_cantidad == 0:
@@ -83,6 +104,26 @@ class Carrito:
         total = self.calcular_total()
         descuento = total * (porcentaje / 100)
         return total - descuento
+
+    def aplicar_descuento_condicional(self, porcentaje, minimo):
+        """
+        Aplica un descuento solo si el total del carrito supera el monto mínimo.
+        
+        Args:
+            porcentaje: Porcentaje de descuento a aplicar (entre 0 y 100).
+            minimo: Monto mínimo que debe alcanzar el carrito para aplicar el descuento.
+            
+        Returns:
+            El total con descuento si se cumple la condición, o el total sin descuento.
+        """
+        if porcentaje < 0 or porcentaje > 100:
+            raise ValueError("El porcentaje debe estar entre 0 y 100")
+            
+        total = self.calcular_total()
+        if total >= minimo:
+            descuento = total * (porcentaje / 100)
+            return total - descuento
+        return total
 
     def contar_items(self):
         """

@@ -8,3 +8,4 @@ class ProductoFactory(factory.Factory):
 
     nombre = factory.Faker("word")
     precio = factory.Faker("pyfloat", left_digits=2, right_digits=2, positive=True)
+    stock = factory.Faker("random_int", min=1, max=100)
