@@ -25,7 +25,7 @@ class UserManager:
             self.hash_service = DefaultHashService()
 
     def add_user(self, username, password):
-        if username in self.users:
+        if self.user_exists(username):
             raise UserAlreadyExistsError(f"El usuario '{username}' ya existe.")
         hashed_pw = self.hash_service.hash(password)
         self.users[username] = hashed_pw
