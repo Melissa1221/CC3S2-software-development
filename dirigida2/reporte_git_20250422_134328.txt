@@ -1,0 +1,41 @@
+====== Reporte del Repositorio Git ======
+Generado el: Tue Apr 22 01:43:28 PM -05 2025
+
+=== Estado del repositorio (git status) ===
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 3 and 8 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	dirigida2/
+	git_avanzado.sh
+	reporte_git_20250422_134328.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+=== Ramas existentes (git branch) ===
+  feature/merge-test 4194b7d Commit inicial en feature/merge-test
+* main               332441d [origin/main: ahead 3, behind 8] Merge branch 'feature/merge-test'
+  rama-renombrada    99e0e34 Merge pull request #16 from Melissa1221/feature/activity8
+
+=== Últimos 5 commits (git log -n 5) ===
+*   332441d (HEAD -> main) Merge branch 'feature/merge-test'
+|\  
+| * 4194b7d (feature/merge-test) Commit inicial en feature/merge-test
+* | 391aed3 Commit conflictivo en main
+|/  
+*   99e0e34 (rama-renombrada) Merge pull request #16 from Melissa1221/feature/activity8
+|\  
+| * 713de48 (origin/feature/activity8) activity8: ejercicio 9
+
+=== Lista de stashes (git stash list) ===
+
+=== Tags existentes (git tag) ===
+
+=== Remotos configurados (git remote -v) ===
+origin	git@github.com:Melissa1221/CC3S2-software-development.git (fetch)
+origin	git@github.com:Melissa1221/CC3S2-software-development.git (push)
+
+====== Fin del Reporte ======
