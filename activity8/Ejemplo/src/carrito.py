@@ -105,6 +105,24 @@ class Carrito:
         descuento = total * (porcentaje / 100)
         return total - descuento
 
+    def calcular_impuestos(self, porcentaje):
+        """
+        Calcula el valor de los impuestos basados en el porcentaje indicado.
+        
+        Args:
+            porcentaje (float): Porcentaje de impuesto a aplicar (entre 0 y 100).
+        
+        Returns:
+            float: Monto del impuesto.
+        
+        Raises:
+            ValueError: Si el porcentaje no está entre 0 y 100.
+        """
+        if porcentaje < 0 or porcentaje > 100:
+            raise ValueError("El porcentaje debe estar entre 0 y 100")
+        total = self.calcular_total()
+        return total * (porcentaje / 100)
+
     def aplicar_descuento_condicional(self, porcentaje, minimo):
         """
         Aplica un descuento solo si el total del carrito supera el monto mínimo.
