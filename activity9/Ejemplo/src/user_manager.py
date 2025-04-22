@@ -5,13 +5,14 @@ class UserAlreadyExistsError(Exception):
     pass
 
 class UserManager:
-    def __init__(self, hash_service=None, repo=None):
+    def __init__(self, hash_service=None, repo=None, email_service=None):
         """
         Si no se provee un servicio de hashing, se asume un hash trivial por defecto
         (simplemente para no romper el código).
         """
         self.hash_service = hash_service or self._default_hash_service()
         self.repo = repo or self._default_repo()
+        self.email_service = email_service
 
     def _default_hash_service(self):
         class DefaultHashService:
@@ -41,6 +42,8 @@ class UserManager:
             raise UserAlreadyExistsError(f"El usuario '{username}' ya existe.")
         hashed = self.hash_service.hash(password)
         self.repo.save_user(username, hashed)
+        if self.email_service:
+            self.email_service.send_welcome_email(username)
 
     def user_exists(self, username):
         return self.repo.exists(username)
