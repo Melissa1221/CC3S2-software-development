@@ -5,28 +5,24 @@ import pytest
 from src.carrito import Carrito, Producto
 from src.factories import ProductoFactory
 
-def test_agregar_producto_nuevo():
+def test_agregar_producto_nuevo(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se genera un producto.
+    Arrange: Uso de fixture para un carrito vacío y un producto genérico.
     Act: Se agrega el producto al carrito.
     Assert: Se verifica que el carrito contiene un item con el producto y cantidad 1.
     """
-    # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Laptop", precio=1000.00, stock=10)
-    
     # Act
-    carrito.agregar_producto(producto)
+    carrito.agregar_producto(producto_generico)
     
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 1
-    assert items[0].producto.nombre == "Laptop"
+    assert items[0].producto.nombre == "Genérico"
     assert items[0].cantidad == 1
 
 
-def test_agregar_producto_existente_incrementa_cantidad():
+def test_agregar_producto_existente_incrementa_cantidad(carrito):
     """
     AAA:
     Arrange: Se crea un carrito y se agrega un producto.
@@ -34,7 +30,6 @@ def test_agregar_producto_existente_incrementa_cantidad():
     Assert: Se verifica que la cantidad del producto se incrementa en el item.
     """
     # Arrange
-    carrito = Carrito()
     producto = ProductoFactory(nombre="Mouse", precio=50.00, stock=10)
     carrito.agregar_producto(producto, cantidad=1)
     
@@ -47,20 +42,18 @@ def test_agregar_producto_existente_incrementa_cantidad():
     assert items[0].cantidad == 3
 
 
-def test_remover_producto():
+def test_remover_producto(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto con cantidad 3.
+    Arrange: Se usa fixture de carrito y se agrega un producto con cantidad 3.
     Act: Se remueve una unidad del producto.
     Assert: Se verifica que la cantidad del producto se reduce a 2.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Teclado", precio=75.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=3)
+    carrito.agregar_producto(producto_generico, cantidad=3)
     
     # Act
-    carrito.remover_producto(producto, cantidad=1)
+    carrito.remover_producto(producto_generico, cantidad=1)
     
     # Assert
     items = carrito.obtener_items()
@@ -68,40 +61,36 @@ def test_remover_producto():
     assert items[0].cantidad == 2
 
 
-def test_remover_producto_completo():
+def test_remover_producto_completo(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y se agrega un producto.
     Act: Se remueve la totalidad de la cantidad del producto.
     Assert: Se verifica que el producto es eliminado del carrito.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Monitor", precio=300.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=2)
+    carrito.agregar_producto(producto_generico, cantidad=2)
     
     # Act
-    carrito.remover_producto(producto, cantidad=2)
+    carrito.remover_producto(producto_generico, cantidad=2)
     
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 0
 
 
-def test_actualizar_cantidad_producto():
+def test_actualizar_cantidad_producto(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y se agrega un producto.
     Act: Se actualiza la cantidad del producto a 5.
     Assert: Se verifica que la cantidad se actualiza correctamente.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Auriculares", precio=150.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=1)
+    carrito.agregar_producto(producto_generico, cantidad=1)
     
     # Act
-    carrito.actualizar_cantidad(producto, nueva_cantidad=5)
+    carrito.actualizar_cantidad(producto_generico, nueva_cantidad=5)
     
     # Assert
     items = carrito.obtener_items()
@@ -109,76 +98,66 @@ def test_actualizar_cantidad_producto():
     assert items[0].cantidad == 5
 
 
-def test_actualizar_cantidad_a_cero_remueve_producto():
+def test_actualizar_cantidad_a_cero_remueve_producto(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y se agrega un producto.
     Act: Se actualiza la cantidad del producto a 0.
     Assert: Se verifica que el producto se elimina del carrito.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Cargador", precio=25.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=3)
+    carrito.agregar_producto(producto_generico, cantidad=3)
     
     # Act
-    carrito.actualizar_cantidad(producto, nueva_cantidad=0)
+    carrito.actualizar_cantidad(producto_generico, nueva_cantidad=0)
     
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 0
 
 
-def test_calcular_total():
+def test_calcular_total(carrito_con_productos):
     """
     AAA:
-    Arrange: Se crea un carrito y se agregan varios productos con distintas cantidades.
+    Arrange: Se usa fixture de carrito con productos ya agregados.
     Act: Se calcula el total del carrito.
     Assert: Se verifica que el total es la suma correcta de cada item (precio * cantidad).
     """
-    # Arrange
-    carrito = Carrito()
-    producto1 = ProductoFactory(nombre="Impresora", precio=200.00, stock=10)
-    producto2 = ProductoFactory(nombre="Escáner", precio=150.00, stock=10)
-    carrito.agregar_producto(producto1, cantidad=2)  # Total 400
-    carrito.agregar_producto(producto2, cantidad=1)  # Total 150
-    
     # Act
-    total = carrito.calcular_total()
+    total = carrito_con_productos.calcular_total()
     
     # Assert
-    assert total == 550.00
+    # Producto Barato: 50.0 * 2 = 100.0
+    # Producto Caro: 500.0 * 1 = 500.0
+    # Total: 600.0
+    assert total == 600.00
 
 
-def test_aplicar_descuento():
+def test_aplicar_descuento(carrito_con_productos):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto con una cantidad determinada.
+    Arrange: Se usa fixture de carrito con productos ya agregados.
     Act: Se aplica un descuento del 10% al total.
     Assert: Se verifica que el total con descuento sea el correcto.
     """
-    # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Tablet", precio=500.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=2)  # Total 1000
-    
     # Act
-    total_con_descuento = carrito.aplicar_descuento(10)
+    total_con_descuento = carrito_con_productos.aplicar_descuento(10)
     
     # Assert
-    assert total_con_descuento == 900.00
+    # Total sin descuento: 600.0
+    # Descuento (10%): 60.0
+    # Total con descuento: 540.0
+    assert total_con_descuento == 540.00
 
 
-def test_aplicar_descuento_limites():
+def test_aplicar_descuento_limites(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y producto.
     Act y Assert: Se verifica que aplicar un descuento fuera del rango [0, 100] genere un error.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Smartphone", precio=800.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=1)
+    carrito.agregar_producto(producto_generico, cantidad=1)
     
     # Act y Assert
     with pytest.raises(ValueError):
@@ -186,47 +165,35 @@ def test_aplicar_descuento_limites():
     with pytest.raises(ValueError):
         carrito.aplicar_descuento(-5)
 
-def test_vaciar_carrito():
+def test_vaciar_carrito(carrito_con_productos):
     """
     AAA:
-    Arrange: Se crea un carrito y se agregan varios productos.
+    Arrange: Se usa fixture de carrito con productos ya agregados.
     Act: Se vacía el carrito.
     Assert: Se verifica que la lista de items quede vacía y el total sea 0.
     """
-    # Arrange
-    carrito = Carrito()
-    producto1 = ProductoFactory(nombre="Disco Duro", precio=120.00, stock=10)
-    producto2 = ProductoFactory(nombre="Memoria RAM", precio=80.00, stock=10)
-    carrito.agregar_producto(producto1, cantidad=2)
-    carrito.agregar_producto(producto2, cantidad=3)
-    
     # Act
-    carrito.vaciar()
+    carrito_con_productos.vaciar()
     
     # Assert
-    assert len(carrito.obtener_items()) == 0
-    assert carrito.calcular_total() == 0.0
+    assert len(carrito_con_productos.obtener_items()) == 0
+    assert carrito_con_productos.calcular_total() == 0.0
 
-def test_aplicar_descuento_condicional_cumple_minimo():
+def test_aplicar_descuento_condicional_cumple_minimo(carrito_con_productos):
     """
     AAA:
-    Arrange: Se crea un carrito con un total que supera el mínimo para el descuento.
+    Arrange: Se usa fixture de carrito con productos para un total de 600.
     Act: Se aplica un descuento condicional del 15% con un mínimo de $500.
     Assert: Se verifica que se aplica el descuento ya que se cumple la condición.
     """
-    # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Laptop Gaming", precio=200.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=3)  # Total 600
-    
     # Act
-    total_con_descuento = carrito.aplicar_descuento_condicional(15, 500)
+    total_con_descuento = carrito_con_productos.aplicar_descuento_condicional(15, 500)
     
     # Assert
     # 600 - (600 * 0.15) = 600 - 90 = 510
     assert total_con_descuento == 510.00
 
-def test_aplicar_descuento_condicional_no_cumple_minimo():
+def test_aplicar_descuento_condicional_no_cumple_minimo(carrito, producto_barato):
     """
     AAA:
     Arrange: Se crea un carrito con un total que NO supera el mínimo para el descuento.
@@ -234,18 +201,16 @@ def test_aplicar_descuento_condicional_no_cumple_minimo():
     Assert: Se verifica que NO se aplica el descuento ya que no se cumple la condición.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Teclado Mecánico", precio=100.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=3)  # Total 300
+    carrito.agregar_producto(producto_barato, cantidad=3)  # Total 150
     
     # Act
     total_con_descuento = carrito.aplicar_descuento_condicional(15, 500)
     
     # Assert
-    # El total es 300, que es menor que 500, así que no se aplica descuento
-    assert total_con_descuento == 300.00
+    # El total es 150, que es menor que 500, así que no se aplica descuento
+    assert total_con_descuento == 150.00
 
-def test_aplicar_descuento_condicional_igual_al_minimo():
+def test_aplicar_descuento_condicional_igual_al_minimo(carrito, producto_caro):
     """
     AAA:
     Arrange: Se crea un carrito con un total exactamente igual al mínimo para el descuento.
@@ -253,9 +218,7 @@ def test_aplicar_descuento_condicional_igual_al_minimo():
     Assert: Se verifica que se aplica el descuento ya que se cumple la condición.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Monitor 4K", precio=250.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=2)  # Total exactamente 500
+    carrito.agregar_producto(producto_caro, cantidad=1)  # Total exactamente 500
     
     # Act
     total_con_descuento = carrito.aplicar_descuento_condicional(15, 500)
@@ -264,17 +227,15 @@ def test_aplicar_descuento_condicional_igual_al_minimo():
     # 500 - (500 * 0.15) = 500 - 75 = 425
     assert total_con_descuento == 425.00
 
-def test_aplicar_descuento_condicional_porcentaje_invalido():
+def test_aplicar_descuento_condicional_porcentaje_invalido(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y producto.
     Act y Assert: Se verifica que aplicar un descuento condicional con porcentaje fuera del 
     rango [0, 100] genere un error.
     """
     # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Audífonos", precio=100.00, stock=10)
-    carrito.agregar_producto(producto, cantidad=2)
+    carrito.agregar_producto(producto_generico, cantidad=2)
     
     # Act y Assert
     with pytest.raises(ValueError):
@@ -296,15 +257,14 @@ def test_producto_con_stock():
     assert producto.stock == 15
     assert producto.__repr__() == "Producto(Teclado, 50.0, stock=15)"
 
-def test_agregar_producto_dentro_del_stock():
+def test_agregar_producto_dentro_del_stock(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito y un producto con stock limitado.
+    Arrange: Se usa fixture de carrito y se crea un producto con stock limitado.
     Act: Se agrega una cantidad dentro del límite de stock.
     Assert: Se verifica que el producto se agrega correctamente.
     """
     # Arrange
-    carrito = Carrito()
     producto = Producto("Monitor", 300.00, stock=5)
     
     # Act
@@ -315,14 +275,13 @@ def test_agregar_producto_dentro_del_stock():
     assert len(items) == 1
     assert items[0].cantidad == 3
 
-def test_agregar_producto_excede_stock():
+def test_agregar_producto_excede_stock(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito y un producto con stock limitado.
+    Arrange: Se usa fixture de carrito y se crea un producto con stock limitado.
     Act & Assert: Se verifica que se lanza una excepción al intentar agregar más unidades que el stock disponible.
     """
     # Arrange
-    carrito = Carrito()
     producto = Producto("Impresora 3D", 400.00, stock=2)
     
     # Act & Assert
@@ -330,15 +289,14 @@ def test_agregar_producto_excede_stock():
         carrito.agregar_producto(producto, cantidad=3)
     assert "No hay suficiente stock" in str(excinfo.value)
 
-def test_agregar_producto_acumulado_excede_stock():
+def test_agregar_producto_acumulado_excede_stock(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito, se agrega un producto con cantidad válida.
+    Arrange: Se usa fixture de carrito, se agrega un producto con cantidad válida.
     Act & Assert: Se verifica que se lanza una excepción al intentar agregar más unidades 
     que, sumadas a las ya existentes, exceden el stock.
     """
     # Arrange
-    carrito = Carrito()
     producto = Producto("Smartphone", 800.00, stock=5)
     carrito.agregar_producto(producto, cantidad=3)
     
@@ -347,15 +305,14 @@ def test_agregar_producto_acumulado_excede_stock():
         carrito.agregar_producto(producto, cantidad=3)
     assert "No hay suficiente stock" in str(excinfo.value)
 
-def test_actualizar_cantidad_excede_stock():
+def test_actualizar_cantidad_excede_stock(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y se agrega un producto.
     Act & Assert: Se verifica que se lanza una excepción al intentar actualizar la cantidad 
     a un valor que excede el stock.
     """
     # Arrange
-    carrito = Carrito()
     producto = Producto("Tablet", 250.00, stock=3)
     carrito.agregar_producto(producto, cantidad=1)
     
@@ -364,15 +321,14 @@ def test_actualizar_cantidad_excede_stock():
         carrito.actualizar_cantidad(producto, nueva_cantidad=5)
     assert "No hay suficiente stock" in str(excinfo.value)
 
-def test_obtener_items_ordenados_por_precio():
+def test_obtener_items_ordenados_por_precio(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito y se agregan varios productos con diferentes precios.
+    Arrange: Se usa fixture de carrito y se agregan varios productos con diferentes precios.
     Act: Se solicitan los items ordenados por precio.
     Assert: Se verifica que la lista devuelta está ordenada de menor a mayor precio.
     """
     # Arrange
-    carrito = Carrito()
     producto1 = Producto("Ratón", 25.00, stock=10)
     producto2 = Producto("Teclado", 50.00, stock=10)
     producto3 = Producto("Monitor", 200.00, stock=10)
@@ -391,15 +347,14 @@ def test_obtener_items_ordenados_por_precio():
     assert items_ordenados[1].producto.nombre == "Teclado"
     assert items_ordenados[2].producto.nombre == "Monitor"
 
-def test_obtener_items_ordenados_por_nombre():
+def test_obtener_items_ordenados_por_nombre(carrito):
     """
     AAA:
-    Arrange: Se crea un carrito y se agregan varios productos con diferentes nombres.
+    Arrange: Se usa fixture de carrito y se agregan varios productos con diferentes nombres.
     Act: Se solicitan los items ordenados por nombre.
     Assert: Se verifica que la lista devuelta está ordenada alfabéticamente por nombre.
     """
     # Arrange
-    carrito = Carrito()
     producto1 = Producto("Monitor", 200.00, stock=10)
     producto2 = Producto("Ratón", 25.00, stock=10)
     producto3 = Producto("Teclado", 50.00, stock=10)
@@ -418,16 +373,14 @@ def test_obtener_items_ordenados_por_nombre():
     assert items_ordenados[1].producto.nombre == "Ratón"
     assert items_ordenados[2].producto.nombre == "Teclado"
 
-def test_obtener_items_ordenados_criterio_invalido():
+def test_obtener_items_ordenados_criterio_invalido(carrito, producto_generico):
     """
     AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
+    Arrange: Se usa fixture de carrito y producto.
     Act & Assert: Se verifica que se lanza una excepción al solicitar items ordenados con un criterio inválido.
     """
     # Arrange
-    carrito = Carrito()
-    producto = Producto("Laptop", 800.00, stock=5)
-    carrito.agregar_producto(producto, cantidad=1)
+    carrito.agregar_producto(producto_generico, cantidad=1)
     
     # Act & Assert
     with pytest.raises(ValueError) as excinfo:
