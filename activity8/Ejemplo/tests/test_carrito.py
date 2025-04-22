@@ -386,3 +386,123 @@ def test_obtener_items_ordenados_criterio_invalido(carrito, producto_generico):
     with pytest.raises(ValueError) as excinfo:
         carrito.obtener_items_ordenados("color")
     assert "Criterio de ordenamiento no válido" in str(excinfo.value)
+
+# Pruebas parametrizadas
+@pytest.mark.parametrize(
+    "porcentaje,total_esperado",
+    [
+        (0, 600.0),    # Sin descuento
+        (10, 540.0),   # 10% de descuento
+        (25, 450.0),   # 25% de descuento
+        (50, 300.0),   # 50% de descuento
+        (75, 150.0),   # 75% de descuento
+        (100, 0.0),    # 100% de descuento
+    ]
+)
+def test_aplicar_descuento_parametrizado(carrito_con_productos, porcentaje, total_esperado):
+    """
+    Prueba parametrizada para verificar diferentes porcentajes de descuento.
+    """
+    # Act
+    total_con_descuento = carrito_con_productos.aplicar_descuento(porcentaje)
+    
+    # Assert
+    assert total_con_descuento == total_esperado
+
+@pytest.mark.parametrize(
+    "porcentaje_invalido",
+    [
+        -10,  # Descuento negativo
+        101,  # Descuento mayor a 100%
+        150,  # Descuento muy alto
+        -0.5, # Descuento negativo fraccional
+    ]
+)
+def test_aplicar_descuento_porcentaje_invalido_parametrizado(carrito_con_productos, porcentaje_invalido):
+    """
+    Prueba parametrizada para verificar que porcentajes inválidos generan excepción.
+    """
+    # Act & Assert
+    with pytest.raises(ValueError) as excinfo:
+        carrito_con_productos.aplicar_descuento(porcentaje_invalido)
+    assert "El porcentaje debe estar entre 0 y 100" in str(excinfo.value)
+
+@pytest.mark.parametrize(
+    "porcentaje,minimo,total_esperado,se_aplica_descuento",
+    [
+        (10, 100, 540.0, True),   # Supera el mínimo (600 > 100) - se aplica 10%
+        (20, 700, 600.0, False),  # No supera el mínimo (600 < 700) - no se aplica descuento
+        (15, 600, 510.0, True),   # Igual al mínimo (600 = 600) - se aplica 15%
+        (50, 300, 300.0, True),   # Supera el mínimo y alto descuento - 50%
+        (0, 0, 600.0, False),     # Ambos en 0 - no hay descuento real aunque se cumple condición
+    ]
+)
+def test_aplicar_descuento_condicional_parametrizado(carrito_con_productos, porcentaje, minimo, total_esperado, se_aplica_descuento):
+    """
+    Prueba parametrizada para verificar diferentes escenarios de descuento condicional.
+    """
+    # Act
+    total_con_descuento = carrito_con_productos.aplicar_descuento_condicional(porcentaje, minimo)
+    
+    # Assert
+    if se_aplica_descuento:
+        assert total_con_descuento < carrito_con_productos.calcular_total()
+    else:
+        assert total_con_descuento == carrito_con_productos.calcular_total()
+    assert total_con_descuento == total_esperado
+
+@pytest.mark.parametrize(
+    "cantidad_inicial,nueva_cantidad,cantidad_esperada",
+    [
+        (1, 5, 5),     # Aumentar cantidad
+        (3, 2, 2),     # Disminuir cantidad
+        (2, 2, 2),     # Mantener cantidad
+        (1, 10, 10),   # Cantidad máxima (dentro del stock)
+        (5, 0, 0),     # Remover producto (cantidad 0)
+    ]
+)
+def test_actualizar_cantidad_parametrizado(carrito, producto_generico, cantidad_inicial, nueva_cantidad, cantidad_esperada):
+    """
+    Prueba parametrizada para verificar actualización de cantidades válidas.
+    """
+    # Arrange
+    carrito.agregar_producto(producto_generico, cantidad=cantidad_inicial)
+    
+    # Act
+    carrito.actualizar_cantidad(producto_generico, nueva_cantidad=nueva_cantidad)
+    
+    # Assert
+    items = carrito.obtener_items()
+    if nueva_cantidad == 0:
+        assert len(items) == 0  # El producto debe ser eliminado
+    else:
+        assert len(items) == 1
+        assert items[0].cantidad == cantidad_esperada
+
+@pytest.mark.parametrize(
+    "stock,cantidad,excede_stock",
+    [
+        (5, 3, False),   # Dentro del stock
+        (5, 5, False),   # Igual al stock
+        (5, 6, True),    # Excede el stock
+        (1, 2, True),    # Excede el stock (mínimo)
+        (10, 11, True),  # Excede el stock (por 1)
+    ]
+)
+def test_verificar_stock_parametrizado(carrito, stock, cantidad, excede_stock):
+    """
+    Prueba parametrizada para verificar la validación de stock.
+    """
+    # Arrange
+    producto = Producto("Test Stock", 100.0, stock=stock)
+    
+    # Act & Assert
+    if excede_stock:
+        with pytest.raises(ValueError) as excinfo:
+            carrito.agregar_producto(producto, cantidad=cantidad)
+        assert "No hay suficiente stock" in str(excinfo.value)
+    else:
+        carrito.agregar_producto(producto, cantidad=cantidad)
+        items = carrito.obtener_items()
+        assert len(items) == 1
+        assert items[0].cantidad == cantidad
