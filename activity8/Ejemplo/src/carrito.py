@@ -26,6 +26,31 @@ class Carrito:
     def __init__(self):
         self.items = []
 
+    def validar_stock(self, producto, cantidad_solicitada):
+        """
+        Valida que haya suficiente stock para la cantidad solicitada.
+        
+        Args:
+            producto: El producto a validar.
+            cantidad_solicitada: La cantidad que se quiere agregar o actualizar.
+            
+        Returns:
+            La cantidad actual del producto en el carrito.
+            
+        Raises:
+            ValueError: Si no hay suficiente stock disponible.
+        """
+        cantidad_actual = 0
+        for item in self.items:
+            if item.producto.nombre == producto.nombre:
+                cantidad_actual = item.cantidad
+                break
+                
+        if cantidad_actual + cantidad_solicitada > producto.stock:
+            raise ValueError(f"No hay suficiente stock. Disponible: {producto.stock}, En carrito: {cantidad_actual}, Solicitado: {cantidad_solicitada}")
+            
+        return cantidad_actual
+
     def agregar_producto(self, producto, cantidad=1):
         """
         Agrega un producto al carrito. Si el producto ya existe, incrementa la cantidad.
@@ -34,15 +59,8 @@ class Carrito:
         Raises:
             ValueError: Si la cantidad a agregar supera el stock disponible.
         """
-        # Verificar stock disponible
-        cantidad_actual = 0
-        for item in self.items:
-            if item.producto.nombre == producto.nombre:
-                cantidad_actual = item.cantidad
-                break
-                
-        if cantidad_actual + cantidad > producto.stock:
-            raise ValueError(f"No hay suficiente stock. Disponible: {producto.stock}, En carrito: {cantidad_actual}, Solicitado: {cantidad}")
+        # Verificar stock disponible usando el método de validación
+        cantidad_actual = self.validar_stock(producto, cantidad)
             
         # Si hay suficiente stock, agregar producto
         for item in self.items:
@@ -75,7 +93,7 @@ class Carrito:
         if nueva_cantidad < 0:
             raise ValueError("La cantidad no puede ser negativa")
             
-        # Verificar stock disponible
+        # Verificar stock disponible usando la validación de stock
         if nueva_cantidad > producto.stock:
             raise ValueError(f"No hay suficiente stock. Disponible: {producto.stock}, Solicitado: {nueva_cantidad}")
             
