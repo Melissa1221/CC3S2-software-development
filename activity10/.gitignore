@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+.pytest_cache/
+.coverage/
+.env/
+.coverage.xml
+.coverage.json
+.coverage.html
+.coverage.json.cov
+.coverage.json.cov.html
+.coverage.json.cov.xml
+.coverage.json.cov.xml.html
