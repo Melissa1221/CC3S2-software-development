@@ -1,0 +1,13 @@
+_pytest
+__pycache__
+.pytest_cache
+.coverage
+.vscode
+.idea
+
+venv/
+htmlcov/
+.pytest_cache/
+.coverage/
+.vscode/
+.idea/
