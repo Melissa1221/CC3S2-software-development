@@ -1,0 +1,6 @@
+pytest
+flask
+flask_sqlalchemy
+factory_boy
+faker
+coverage
