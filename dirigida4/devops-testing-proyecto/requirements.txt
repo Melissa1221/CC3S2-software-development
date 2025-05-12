@@ -1,2 +1,9 @@
 pytest
 requests
+hypothesis
+fastapi
+uvicorn
+sqlalchemy
+mutmut
+pytest-cov
+pytest-md-report

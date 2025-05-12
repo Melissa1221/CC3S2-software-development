@@ -1,5 +1,9 @@
 pytest
 requests
-pytest-hypothesis
-pytest-benchmark
+hypothesis
+fastapi
+uvicorn
+sqlalchemy
+mutmut
 pytest-cov
+pytest-md-report

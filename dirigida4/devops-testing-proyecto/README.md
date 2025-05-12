@@ -21,6 +21,56 @@ tests/                     # Pruebas unitarias
 tests/integration/         # Pruebas de integración
 ```
 
+#### Ejecución del pipeline CI local
+
+Este proyecto incluye un pipeline de CI local que puedes ejecutar con:
+
+```bash
+make ci
+```
+
+Este comando ejecuta tox, que realizará las siguientes verificaciones:
+
+1. Pruebas en Python 3.10
+2. Pruebas en Python 3.11
+3. Linting (flake8 + black)
+4. Verificación de tipos (mypy)
+
+También puedes ejecutar cada paso individualmente:
+
+```bash
+make test      # Solo ejecuta los tests
+make coverage  # Ejecuta los tests con reporte de cobertura
+make lint      # Ejecuta verificaciones de estilo de código
+make type      # Ejecuta verificación de tipos
+make format    # Formatea código con black
+make clean     # Limpia archivos temporales
+```
+
+#### Pruebas con marcadores específicos
+
+Este proyecto utiliza marcadores pytest para organizar los tests:
+
+```bash
+pytest -m contract         # Ejecuta tests que verifican invariantes de dominio
+pytest -m http             # Ejecuta tests que requieren el gateway HTTP
+pytest -m "not slow"       # Ejecuta todos los tests excepto los lentos
+```
+
+#### Opciones de gateway de pagos
+
+Puedes usar diferentes implementaciones del gateway de pagos:
+
+1. **DummyGateway**: Gateway de prueba local rápido (por defecto)
+2. **RealGateway**: Gateway simulado con latencia de red
+3. **HttpPaymentGateway**: Gateway que se comunica con un microservicio HTTP
+
+Para usar el gateway real con latencia, establece la variable de entorno:
+
+```bash
+USE_REAL_GATEWAY=1 pytest
+```
+
 ####  Principios SOLID aplicados al testing
 La filosofía SOLID, originaria del desarrollo orientado a objetos, se extiende al diseño de suites de pruebas:
 
