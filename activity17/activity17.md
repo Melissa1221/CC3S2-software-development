@@ -1,0 +1,2 @@
+La actividad 17 se realizó en un repositorio compartido con mis compañeros de grupo para una contribución en simultaneo, con esto poder tener mayor order denuestras actividades grupales.
+Puede encontrar el repositorio en el siguiente link: https://github.com/Melissa1221/kanban-activity/blob/main/Actividad_17.md
